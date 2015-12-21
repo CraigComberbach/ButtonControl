@@ -3,7 +3,7 @@
 /***********Add to config file header************/
 /*
 //Buttons Debounce Library
-#define BUTTON_CONTROL_MAJOR	1
+#define BUTTON_CONTROL_MAJOR	2
 #define BUTTON_CONTROL_MINOR	0
 #define BUTTON_CONTROL_PATCH	0
 
@@ -18,7 +18,7 @@ enum BUTTON_DEFINITIONS
 /***************Add to config file***************/
 /*
 #ifndef BUTTON_CONTROL_LIBRARY
-	#error "You need to include the * library for this code to compile"
+	#error "You need to include the Button Control library for this code to compile"
 #endif
  */
 
@@ -50,6 +50,8 @@ void Buttons_Routine(unsigned long time_mS);
 
 /**
  * Initialize an individual button to behave according to a set of runtime parameters
+ * @param readButtonFunction A pointer to a function that will return the current value of a button
+ * @param buttonReference The unique identifier that that the read function will require for direct access to the buttons current value
  * @param pinValue The pin to read, use the PIN_DEFINITIONS found in config.h
  * @param buttonValue The name of the button, setup in config.h
  * @param thresholdForPress_mS How many mS before a press becomes official
@@ -57,6 +59,6 @@ void Buttons_Routine(unsigned long time_mS);
  * @param notificationFunction A pointer to a function to be called when a buttons state changes
  * @param defaultState The resting level of a button
  */
-void Initialize_Button(enum PIN_DEFINITIONS pinValue, enum BUTTON_DEFINITIONS buttonValue, int thresholdForPress_mS, int thresholdForLongPress_mS, void (*notificationFunction)(enum BUTTON_DEFINITIONS, enum BUTTON_STATUS), int defaultState);
+void Initialize_Button(int (*readButtonFunction)(int), int buttonReference, enum BUTTON_DEFINITIONS buttonValue, int thresholdForPress_mS, int thresholdForLongPress_mS, void (*notificationFunction)(enum BUTTON_DEFINITIONS, enum BUTTON_STATUS), int defaultState);
 
 #endif

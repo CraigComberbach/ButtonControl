@@ -11,13 +11,12 @@ Compiler: XC16 v1.11	IDE: MPLABx 3.05	Tool: ICD3	Computer: Intel Core2 Quad CPU 
 **************************************************************************************************/
 /*************    Header Files    ***************/
 #include "Config.h"
-#include "Buttons Debounce.h"
-#include "Pins.h"
+#include "ButtonControl.h"
 
 /************* Library Definition ***************/
 /*************Semantic  Versioning***************/
 //This project reqires the Pins library to fulfil it's roll
-#if BUTTON_CONTROL_MAJOR != 1
+#if BUTTON_CONTROL_MAJOR != 2
 	#error "Button Debounce has had a change that loses some previously supported functionality"
 #elif BUTTON_CONTROL_MINOR != 0
 	#error "Button Debounce has new features that your code may benefit from"
@@ -26,17 +25,6 @@ Compiler: XC16 v1.11	IDE: MPLABx 3.05	Tool: ICD3	Computer: Intel Core2 Quad CPU 
 #endif
 
 /*************Library Dependencies***************/
-//This code is expecting the Pins Library
-#ifndef PINS_LIBRARY
-	#error "You need to include the Pins library for this code to compile"
-#elif PINS_MAJOR != 2
-	#error "Pins.c has had a change that loses some previously supported functionality"
-#elif PINS_MINOR != 0
-	#error "Pins.c has new features that this code may benefit from"
-#elif PINS_PATCH != 0
-	#error "Pins.c has had a bug fix, you should check to see that we weren't relying on a bug for functionality"
-#endif
-
 /************Arbitrary Functionality*************/
 /*************   Magic  Numbers   ***************/
 /*************    Enumeration     ***************/
@@ -51,7 +39,8 @@ Compiler: XC16 v1.11	IDE: MPLABx 3.05	Tool: ICD3	Computer: Intel Core2 Quad CPU 
 
 struct BUTTONELABRA
 {
-	enum BUTTON_DEFINITIONS correspondingPin;
+	int (*readButtonState)(int uniqueIdentifier);
+	int buttonID;
 	enum BUTTON_STATUS status;
 	unsigned int timer_mS;
 	int pressedThreshold_mS;
@@ -68,7 +57,7 @@ void Buttons_Routine(unsigned long time_mS)
 	for(currentButton = 0; currentButton < NUMBER_OF_BUTTONS; currentButton++)
 	{
 		//Add time to button if pressed
-		if(Pin_Read(button[currentButton].correspondingPin) != button[currentButton].defaultState)
+		if(button[currentButton].readButtonState(button[currentButton].buttonID) != button[currentButton].defaultState)
 			button[currentButton].timer_mS += time_mS;
 		else
 		{
@@ -139,9 +128,10 @@ void Buttons_Routine(unsigned long time_mS)
 	return;
 }
 
-void Initialize_Button(enum PIN_DEFINITIONS pinValue, enum BUTTON_DEFINITIONS buttonValue, int thresholdForPress_mS, int thresholdForLongPress_mS, void (*notificationFunction)(enum BUTTON_DEFINITIONS, enum BUTTON_STATUS), int defaultState)
+void Initialize_Button(int (*readButtonFunction)(int), int buttonToReference, enum BUTTON_DEFINITIONS buttonValue, int thresholdForPress_mS, int thresholdForLongPress_mS, void (*notificationFunction)(enum BUTTON_DEFINITIONS, enum BUTTON_STATUS), int defaultState)
 {
-	button[buttonValue].correspondingPin = pinValue;
+	button[buttonValue].readButtonState = readButtonFunction;
+	button[buttonValue].buttonID = buttonToReference;
 	button[buttonValue].status = UNPRESSED;
 	button[buttonValue].timer_mS = 0;
 	button[buttonValue].pressedThreshold_mS = thresholdForPress_mS;
