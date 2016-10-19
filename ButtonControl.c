@@ -5,8 +5,15 @@ Purpose:
 Notes:					
 
 Version History:
-vnext	2015-12-21	Craig Comberbach
+vnext	?	Craig Comberbach
 Compiler: XC16 v1.11	IDE: MPLABx 3.05	Tool: ICD3	Computer: Intel Core2 Quad CPU 2.40 GHz, 5 GB RAM, Windows 10 64 bit Home 
+
+v2.0.0	2015-12-21	Craig Comberbach
+Compiler: C30 v3.31	IDE: MPLABx 3.05	Tool: ICD3	Computer: Intel Core2 Quad CPU 2.40 GHz, 5 GB RAM, Windows 10 64 bit Home 
+	+Made a generic interface using function pointer so that any snippet of code can make use of this code
+	-Removed library dependency of Pins
+v1.0.0	2015-12-21	Craig Comberbach
+Compiler: C30 v3.31	IDE: MPLABx 3.05	Tool: ICD3	Computer: Intel Core2 Quad CPU 2.40 GHz, 5 GB RAM, Windows 10 64 bit Home 
 	First version
 **************************************************************************************************/
 /*************    Header Files    ***************/
@@ -15,18 +22,11 @@ Compiler: XC16 v1.11	IDE: MPLABx 3.05	Tool: ICD3	Computer: Intel Core2 Quad CPU 
 
 /************* Library Definition ***************/
 /*************Semantic  Versioning***************/
-//This project reqires the Pins library to fulfil it's roll
-#if BUTTON_CONTROL_MAJOR != 2
-	#error "Button Debounce has had a change that loses some previously supported functionality"
-#elif BUTTON_CONTROL_MINOR != 0
-	#error "Button Debounce has new features that your code may benefit from"
-#elif BUTTON_CONTROL_PATCH != 0
-	#error "Button Debounce has had a bug fix, you should check to see that you weren't relying on a bug for functionality"
-#endif
-
 /*************Library Dependencies***************/
 /************Arbitrary Functionality*************/
 /*************   Magic  Numbers   ***************/
+#define NULL_POINTER	(void*)0
+
 /*************    Enumeration     ***************/
 /***********  Structure Definitions  ************/
 /***********State Machine Definitions************/
@@ -130,7 +130,10 @@ void Buttons_Routine(unsigned long time_mS)
 
 void Initialize_Button(int (*readButtonFunction)(int), int buttonToReference, enum BUTTON_DEFINITIONS buttonValue, int thresholdForPress_mS, int thresholdForLongPress_mS, void (*notificationFunction)(enum BUTTON_DEFINITIONS, enum BUTTON_STATUS), int defaultState)
 {
-	button[buttonValue].readButtonState = readButtonFunction;
+	if(readButtonFunction != NULL_POINTER)
+		button[buttonValue].readButtonState = readButtonFunction;
+	else
+	{/*TODO - Error Handling Code*/}
 	button[buttonValue].buttonID = buttonToReference;
 	button[buttonValue].status = UNPRESSED;
 	button[buttonValue].timer_mS = 0;
