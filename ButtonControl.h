@@ -2,10 +2,10 @@
 #define	BUTTON_CONTROL_H
 /***********Add to config file header************/
 /*
-//Buttons Debounce Library
-#define BUTTON_CONTROL_MAJOR	2
-#define BUTTON_CONTROL_MINOR	0
-#define BUTTON_CONTROL_PATCH	0
+	//Buttons Debounce Library
+	#define BUTTON_CONTROL_MAJOR	2
+	#define BUTTON_CONTROL_MINOR	0
+	#define BUTTON_CONTROL_PATCH	0
 
 //Buttons
 enum BUTTON_DEFINITIONS
@@ -23,7 +23,7 @@ enum BUTTON_DEFINITIONS
  */
 
 /*************Semantic  Versioning***************/
-#define BUTTON_CONTROL_LIBRARY
+#define BUTTON_CONTROL_HAL
 
 /*************Library Dependencies***************/
 /*************   Magic  Numbers   ***************/
