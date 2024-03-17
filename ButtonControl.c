@@ -1,21 +1,17 @@
-/**************************************************************************************************
-Target Hardware:		PIC24F...
-Code assumptions:		
-Purpose:				
-Notes:					
-
-Version History:
-vnext	?	Craig Comberbach
-Compiler: XC16 v1.11	IDE: MPLABx 3.05	Tool: ICD3	Computer: Intel Core2 Quad CPU 2.40 GHz, 5 GB RAM, Windows 10 64 bit Home 
-
-v2.0.0	2015-12-21	Craig Comberbach
-Compiler: C30 v3.31	IDE: MPLABx 3.05	Tool: ICD3	Computer: Intel Core2 Quad CPU 2.40 GHz, 5 GB RAM, Windows 10 64 bit Home 
-	+Made a generic interface using function pointer so that any snippet of code can make use of this code
-	-Removed library dependency of Pins
-v1.0.0	2015-12-21	Craig Comberbach
-Compiler: C30 v3.31	IDE: MPLABx 3.05	Tool: ICD3	Computer: Intel Core2 Quad CPU 2.40 GHz, 5 GB RAM, Windows 10 64 bit Home 
-	First version
-**************************************************************************************************/
+/******************************************************************************
+ * Version History:
+ * v2.0.1	?	Craig Comberbach
+ * 	+Added Ceedling tests (using ceedling 0.32.0-9b8d8a9 pre-release and GCC 13.2.0)
+ * 	+Using standard libraries instead of custom declarations (NULL vs NULL_POINTER definition)
+ *	+Header file is compliant with self compilation if required
+ * v2.0.0	2015-12-21	Craig Comberbach
+ * 	Compiler: C30 v3.31	IDE: MPLABx 3.05	Tool: ICD3	Computer: Intel Core2 Quad CPU 2.40 GHz, 5 GB RAM, Windows 10 64 bit Home 
+ * 	+Made a generic interface using function pointer so that any snippet of code can make use of this code
+ * 	-Removed library dependency of Pins
+ * v1.0.0	2015-12-21	Craig Comberbach
+ * 	Compiler: C30 v3.31	IDE: MPLABx 3.05	Tool: ICD3	Computer: Intel Core2 Quad CPU 2.40 GHz, 5 GB RAM, Windows 10 64 bit Home 
+ *	First version
+******************************************************************************/
 /*************    Header Files    ***************/
 #include "ButtonControl.h"
 #include <stddef.h>
