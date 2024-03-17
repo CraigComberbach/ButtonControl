@@ -17,7 +17,6 @@ Compiler: C30 v3.31	IDE: MPLABx 3.05	Tool: ICD3	Computer: Intel Core2 Quad CPU 2
 	First version
 **************************************************************************************************/
 /*************    Header Files    ***************/
-#include "Config.h"
 #include "ButtonControl.h"
 #include <stddef.h>
 
