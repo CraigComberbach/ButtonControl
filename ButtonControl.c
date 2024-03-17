@@ -19,14 +19,13 @@ Compiler: C30 v3.31	IDE: MPLABx 3.05	Tool: ICD3	Computer: Intel Core2 Quad CPU 2
 /*************    Header Files    ***************/
 #include "Config.h"
 #include "ButtonControl.h"
+#include <stddef.h>
 
 /************* Library Definition ***************/
 /*************Semantic  Versioning***************/
 /*************Library Dependencies***************/
 /************Arbitrary Functionality*************/
 /*************   Magic  Numbers   ***************/
-#define NULL_POINTER	(void*)0
-
 /*************    Enumeration     ***************/
 /***********  Structure Definitions  ************/
 /***********State Machine Definitions************/
@@ -130,7 +129,7 @@ void Buttons_Routine(unsigned long time_mS)
 
 void Initialize_Button(int (*readButtonFunction)(int), int buttonToReference, enum BUTTON_DEFINITIONS buttonValue, int thresholdForPress_mS, int thresholdForLongPress_mS, void (*notificationFunction)(enum BUTTON_DEFINITIONS, enum BUTTON_STATUS), int defaultState)
 {
-	if(readButtonFunction != NULL_POINTER)
+	if(readButtonFunction != NULL)
 		button[buttonValue].readButtonState = readButtonFunction;
 	else
 	{/*TODO - Error Handling Code*/}
