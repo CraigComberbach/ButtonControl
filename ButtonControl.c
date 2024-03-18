@@ -1,6 +1,6 @@
 /******************************************************************************
  * Version History:
- * v2.0.1	?	Craig Comberbach
+ * v2.0.1	2024-03-18	Craig Comberbach
  * 	+Added Ceedling tests (using ceedling 0.32.0-9b8d8a9 pre-release and GCC 13.2.0)
  * 	+Using standard libraries instead of custom declarations (NULL vs NULL_POINTER definition)
  *	+Header file is compliant with self compilation if required
@@ -31,7 +31,7 @@
 /************* Module Definitions ***************/
 /************* Other  Definitions ***************/
 
-struct BUTTONELABRA
+static struct Button_Object
 {
 	int (*readButtonState)(int uniqueIdentifier);
 	int buttonID;
@@ -41,7 +41,7 @@ struct BUTTONELABRA
 	int longPressedThreshold_mS;
 	void (*notificationFunction)(enum BUTTON_DEFINITIONS, enum BUTTON_STATUS);
 	int defaultState;
-} button[NUMBER_OF_BUTTONS];
+} selves[NUMBER_OF_BUTTONS];
 
 void Buttons_Routine(unsigned long time_mS)
 {
@@ -51,73 +51,72 @@ void Buttons_Routine(unsigned long time_mS)
 	for(currentButton = 0; currentButton < NUMBER_OF_BUTTONS; currentButton++)
 	{
 		//Add time to button if pressed
-		if(button[currentButton].readButtonState(button[currentButton].buttonID) != button[currentButton].defaultState)
-			button[currentButton].timer_mS += time_mS;
+		if(selves[currentButton].readButtonState(selves[currentButton].buttonID) != selves[currentButton].defaultState)
+			selves[currentButton].timer_mS += time_mS;
 		else
 		{
-			button[currentButton].timer_mS = 0;
-			switch(button[currentButton].status)
+			selves[currentButton].timer_mS = 0;
+			switch(selves[currentButton].status)
 			{
 				case UNPRESSED:
 					//Nothing to do here
 					break;
 				case PRESSED:
-					button[currentButton].status = RELEASED;
-					if(*button[currentButton].notificationFunction != NO_NOTIFICATION)
-						button[currentButton].notificationFunction(currentButton, button[currentButton].status);
+					selves[currentButton].status = RELEASED;
+					if(*selves[currentButton].notificationFunction != NO_NOTIFICATION)
+						selves[currentButton].notificationFunction(currentButton, selves[currentButton].status);
 					break;
 				case LONG_PRESSED:
-					button[currentButton].status = RELEASED;
-					if(*button[currentButton].notificationFunction != NO_NOTIFICATION)
-						button[currentButton].notificationFunction(currentButton, button[currentButton].status);
+					selves[currentButton].status = RELEASED;
+					if(*selves[currentButton].notificationFunction != NO_NOTIFICATION)
+						selves[currentButton].notificationFunction(currentButton, selves[currentButton].status);
 					break;
 				case RELEASED:
-					button[currentButton].status = UNPRESSED;
-					if(*button[currentButton].notificationFunction != NO_NOTIFICATION)
-						button[currentButton].notificationFunction(currentButton, button[currentButton].status);
+					selves[currentButton].status = UNPRESSED;
+					if(*selves[currentButton].notificationFunction != NO_NOTIFICATION)
+						selves[currentButton].notificationFunction(currentButton, selves[currentButton].status);
 					break;
 				default:
-					button[currentButton].status = UNPRESSED;
-					button[currentButton].timer_mS = 0;
+					selves[currentButton].status = UNPRESSED;
+					selves[currentButton].timer_mS = 0;
 					break;
 			}
-			if((*button[currentButton].notificationFunction != NO_NOTIFICATION) && (button[currentButton].status != UNPRESSED))
+			if((*selves[currentButton].notificationFunction != NO_NOTIFICATION) && (selves[currentButton].status != UNPRESSED))
 			{
-				button[currentButton].status = UNPRESSED;
-				button[currentButton].notificationFunction(currentButton, button[currentButton].status);
+				selves[currentButton].status = UNPRESSED;
+				selves[currentButton].notificationFunction(currentButton, selves[currentButton].status);
 			}
 		}
 
 		//Check if any thresholds were met
-		switch(button[currentButton].status)
+		switch(selves[currentButton].status)
 		{
 			case UNPRESSED:
-				if(button[currentButton].timer_mS >= button[currentButton].pressedThreshold_mS)
+				if(selves[currentButton].timer_mS >= selves[currentButton].pressedThreshold_mS)
 				{
-					button[currentButton].status = PRESSED;//Upgrade to next level!
-					if(*button[currentButton].notificationFunction != NO_NOTIFICATION)
-						button[currentButton].notificationFunction(currentButton, button[currentButton].status);
+					selves[currentButton].status = PRESSED;//Upgrade to next level!
+					if(*selves[currentButton].notificationFunction != NO_NOTIFICATION)
+						selves[currentButton].notificationFunction(currentButton, selves[currentButton].status);
 				}
 				break;
 			case PRESSED:
-				if(button[currentButton].timer_mS >= button[currentButton].longPressedThreshold_mS)
+				if(selves[currentButton].timer_mS >= selves[currentButton].longPressedThreshold_mS)
 				{
-					button[currentButton].status = LONG_PRESSED;//Upgrade to next level!
-					if(*button[currentButton].notificationFunction != NO_NOTIFICATION)
-						button[currentButton].notificationFunction(currentButton, button[currentButton].status);
+					selves[currentButton].status = LONG_PRESSED;//Upgrade to next level!
+					if(*selves[currentButton].notificationFunction != NO_NOTIFICATION)
+						selves[currentButton].notificationFunction(currentButton, selves[currentButton].status);
 				}
 				break;
 			case LONG_PRESSED:
 				//Don't advance past this point or you risk looping around after ~65.5 seconds
-				button[currentButton].timer_mS = button[currentButton].longPressedThreshold_mS;
+				selves[currentButton].timer_mS = selves[currentButton].longPressedThreshold_mS;
 				break;
 			default:
-				button[currentButton].status = UNPRESSED;
-				button[currentButton].timer_mS = 0;
+				selves[currentButton].status = UNPRESSED;
+				selves[currentButton].timer_mS = 0;
 				break;
 		}
 	}
-
 		
 	return;
 }
@@ -125,16 +124,16 @@ void Buttons_Routine(unsigned long time_mS)
 void Initialize_Button(int (*readButtonFunction)(int), int buttonToReference, enum BUTTON_DEFINITIONS buttonValue, int thresholdForPress_mS, int thresholdForLongPress_mS, void (*notificationFunction)(enum BUTTON_DEFINITIONS, enum BUTTON_STATUS), int defaultState)
 {
 	if(readButtonFunction != NULL)
-		button[buttonValue].readButtonState = readButtonFunction;
+		selves[buttonValue].readButtonState = readButtonFunction;
 	else
 	{/*TODO - Error Handling Code*/}
-	button[buttonValue].buttonID = buttonToReference;
-	button[buttonValue].status = UNPRESSED;
-	button[buttonValue].timer_mS = 0;
-	button[buttonValue].pressedThreshold_mS = thresholdForPress_mS;
-	button[buttonValue].longPressedThreshold_mS = thresholdForLongPress_mS;
-	button[buttonValue].notificationFunction = notificationFunction;
-	button[buttonValue].defaultState = defaultState;
+	selves[buttonValue].buttonID = buttonToReference;
+	selves[buttonValue].status = UNPRESSED;
+	selves[buttonValue].timer_mS = 0;
+	selves[buttonValue].pressedThreshold_mS = thresholdForPress_mS;
+	selves[buttonValue].longPressedThreshold_mS = thresholdForLongPress_mS;
+	selves[buttonValue].notificationFunction = notificationFunction;
+	selves[buttonValue].defaultState = defaultState;
 	
 	return;
 }
