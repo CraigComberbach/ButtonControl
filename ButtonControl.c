@@ -15,6 +15,7 @@
 /*************    Header Files    ***************/
 #include "ButtonControl.h"
 #include <stddef.h>
+#include <errno.h>
 
 /************* Library Definition ***************/
 /*************Semantic  Versioning***************/
@@ -35,12 +36,12 @@ static struct Button_Object
 {
 	int (*readButtonState)(int uniqueIdentifier);
 	int buttonID;
-	enum BUTTON_STATUS status;
+	ButtonStatus_t status;
 	unsigned int timer_mS;
 	int pressedThreshold_mS;
 	int longPressedThreshold_mS;
-	void (*notificationFunction)(enum BUTTON_DEFINITIONS, enum BUTTON_STATUS);
-	int defaultState;
+	void (*notificationFunction)(ButtonObjects_t, ButtonStatus_t);
+	int DefaultState;
 } selves[NUMBER_OF_BUTTONS];
 
 void Buttons_Routine(unsigned long time_mS)
@@ -51,7 +52,7 @@ void Buttons_Routine(unsigned long time_mS)
 	for(currentButton = 0; currentButton < NUMBER_OF_BUTTONS; currentButton++)
 	{
 		//Add time to button if pressed
-		if(selves[currentButton].readButtonState(selves[currentButton].buttonID) != selves[currentButton].defaultState)
+		if(selves[currentButton].readButtonState(selves[currentButton].buttonID) != selves[currentButton].DefaultState)
 			selves[currentButton].timer_mS += time_mS;
 		else
 		{
@@ -121,19 +122,27 @@ void Buttons_Routine(unsigned long time_mS)
 	return;
 }
 
-void Initialize_Button(int (*readButtonFunction)(int), int buttonToReference, enum BUTTON_DEFINITIONS buttonValue, int thresholdForPress_mS, int thresholdForLongPress_mS, void (*notificationFunction)(enum BUTTON_DEFINITIONS, enum BUTTON_STATUS), int defaultState)
+ErrorCode_t Initialize_Button(int (*readButtonFunction)(int),
+								int buttonToReference,
+								ButtonObjects_t ButtonID,
+								int thresholdForPress_mS,
+								int thresholdForLongPress_mS,
+								void (*notificationFunction)(ButtonObjects_t, ButtonStatus_t),
+								ButtonDefaultState_t DefaultState)
 {
-	if(readButtonFunction != NULL)
-		selves[buttonValue].readButtonState = readButtonFunction;
-	else
-	{/*TODO - Error Handling Code*/}
-	selves[buttonValue].buttonID = buttonToReference;
-	selves[buttonValue].status = UNPRESSED;
-	selves[buttonValue].timer_mS = 0;
-	selves[buttonValue].pressedThreshold_mS = thresholdForPress_mS;
-	selves[buttonValue].longPressedThreshold_mS = thresholdForLongPress_mS;
-	selves[buttonValue].notificationFunction = notificationFunction;
-	selves[buttonValue].defaultState = defaultState;
+	if(readButtonFunction == NULL)
+	{
+		return EINVAL;
+	}
 	
-	return;
+	selves[ButtonID].readButtonState = readButtonFunction;
+	selves[ButtonID].buttonID = buttonToReference;
+	selves[ButtonID].status = UNPRESSED;
+	selves[ButtonID].timer_mS = 0;
+	selves[ButtonID].pressedThreshold_mS = thresholdForPress_mS;
+	selves[ButtonID].longPressedThreshold_mS = thresholdForLongPress_mS;
+	selves[ButtonID].notificationFunction = notificationFunction;
+	selves[ButtonID].DefaultState = DefaultState;
+	
+	return 0;
 }

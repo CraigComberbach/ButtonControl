@@ -10,7 +10,7 @@
 	#define BUTTON_CONTROL_PATCH	1
 
 //Buttons
-enum BUTTON_DEFINITIONS
+enum ButtonObjects_t
 {
 	BUTTON_,
 	NUMBER_OF_BUTTONS
@@ -30,17 +30,21 @@ enum BUTTON_DEFINITIONS
 /*************Library Dependencies***************/
 /*************   Magic  Numbers   ***************/
 #define NO_NOTIFICATION	(void*)0
-#define NORMALLY_HIGH	1
-#define NORMALLY_LOW	0
 
 /*************    Enumeration     ***************/
-enum BUTTON_STATUS
+typedef enum
+{
+	NORMALLY_LOW,	
+	NORMALLY_HIGH,
+} ButtonDefaultState_t;
+
+typedef enum
 {
 	UNPRESSED,
 	PRESSED,
 	LONG_PRESSED,
 	RELEASED
-};
+} ButtonStatus_t;
 
 /***********      Data Structures    ************/
 /*************Function  Prototypes***************/
@@ -61,6 +65,6 @@ void Buttons_Routine(unsigned long time_mS);
  * @param notificationFunction A pointer to a function to be called when a buttons state changes
  * @param defaultState The resting level of a button
  */
-void Initialize_Button(int (*readButtonFunction)(int), int buttonReference, enum BUTTON_DEFINITIONS buttonValue, int thresholdForPress_mS, int thresholdForLongPress_mS, void (*notificationFunction)(enum BUTTON_DEFINITIONS, enum BUTTON_STATUS), int defaultState);
+ErrorCode_t Initialize_Button(int (*readButtonFunction)(int), int buttonReference, ButtonObjects_t self, int thresholdForPress_mS, int thresholdForLongPress_mS, void (*notificationFunction)(ButtonObjects_t, ButtonStatus_t), ButtonDefaultState_t defaultState);
 
 #endif
