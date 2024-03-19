@@ -14,7 +14,6 @@
 ******************************************************************************/
 /*************    Header Files    ***************/
 #include "ButtonControl.h"
-#include <stddef.h>
 #include <errno.h>
 
 /************* Library Definition ***************/
@@ -22,6 +21,8 @@
 /*************Library Dependencies***************/
 /************Arbitrary Functionality*************/
 /*************   Magic  Numbers   ***************/
+#define ZEROED	0
+
 /*************    Enumeration     ***************/
 /***********  Structure Definitions  ************/
 /***********State Machine Definitions************/
@@ -42,7 +43,18 @@ static struct Button_Object
 	int longPressedThreshold_mS;
 	void (*notificationFunction)(ButtonObjects_t, ButtonStatus_t);
 	int DefaultState;
-} selves[NUMBER_OF_BUTTONS];
+} selves[NUMBER_OF_BUTTONS]  = {[0 ... NUMBER_OF_BUTTONS - 1] =
+	{
+		.readButtonState = NULL,
+		.notificationFunction = NULL,
+		
+		.buttonID = 0,
+		.status = UNPRESSED,
+		.timer_mS = ZEROED,
+		.pressedThreshold_mS = 0,
+		.longPressedThreshold_mS = 0,
+		.DefaultState = NORMALLY_LOW,
+	}};
 
 void Buttons_Routine(unsigned long time_mS)
 {
@@ -134,11 +146,15 @@ ErrorCode_t Initialize_Button(int (*readButtonFunction)(int),
 	{
 		return EINVAL;
 	}
+	if((ButtonID < 0) || (ButtonID >= NUMBER_OF_BUTTONS))
+	{
+		return ERANGE;
+	}
 	
 	selves[ButtonID].readButtonState = readButtonFunction;
 	selves[ButtonID].buttonID = buttonToReference;
 	selves[ButtonID].status = UNPRESSED;
-	selves[ButtonID].timer_mS = 0;
+	selves[ButtonID].timer_mS = ZEROED;
 	selves[ButtonID].pressedThreshold_mS = thresholdForPress_mS;
 	selves[ButtonID].longPressedThreshold_mS = thresholdForLongPress_mS;
 	selves[ButtonID].notificationFunction = notificationFunction;

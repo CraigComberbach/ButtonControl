@@ -1,6 +1,7 @@
 #ifndef BUTTON_CONTROL_H
 #define	BUTTON_CONTROL_H
 #include "Config.h"
+#include <stddef.h>
 
 /***********Add to config file header************/
 /*
@@ -29,7 +30,7 @@ enum ButtonObjects_t
 
 /*************Library Dependencies***************/
 /*************   Magic  Numbers   ***************/
-#define NO_NOTIFICATION	(void*)0
+#define NO_NOTIFICATION	NULL
 
 /*************    Enumeration     ***************/
 typedef enum
