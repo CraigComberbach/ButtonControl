@@ -1,6 +1,6 @@
 /******************************************************************************
  * Version History:
- * v2.0.1	2024-03-18	Craig Comberbach
+ * v2.0.1	2024-03-20	Craig Comberbach
  * 	+Added Ceedling tests (using ceedling 0.32.0-9b8d8a9 pre-release and GCC 13.2.0)
  * 	+Using standard libraries instead of custom declarations (NULL vs NULL_POINTER definition)
  *	+Header file is compliant with self compilation if required
@@ -35,19 +35,18 @@
 
 static struct Button_Object
 {
-	int (*readButtonState)(int uniqueIdentifier);
-	int buttonID;
+	ErrorCode_t (*readButtonState)(ButtonObjects_t uniqueIdentifier);
+	ButtonObjects_t buttonID;
 	ButtonStatus_t status;
 	unsigned int timer_mS;
-	int pressedThreshold_mS;
-	int longPressedThreshold_mS;
+	uint16_t pressedThreshold_mS;
+	uint16_t longPressedThreshold_mS;
 	void (*notificationFunction)(ButtonObjects_t, ButtonStatus_t);
-	int DefaultState;
+	ButtonDefaultState_t DefaultState;
 } selves[NUMBER_OF_BUTTONS]  = {[0 ... NUMBER_OF_BUTTONS - 1] =
 	{
 		.readButtonState = NULL,
 		.notificationFunction = NULL,
-		
 		.buttonID = 0,
 		.status = UNPRESSED,
 		.timer_mS = ZEROED,
@@ -134,11 +133,11 @@ void Buttons_Routine(unsigned long time_mS)
 	return;
 }
 
-ErrorCode_t Initialize_Button(int (*readButtonFunction)(int),
-								int buttonToReference,
+ErrorCode_t Initialize_Button(ErrorCode_t (*readButtonFunction)(ButtonObjects_t),
+								uint8_t buttonToReference,
 								ButtonObjects_t ButtonID,
-								int thresholdForPress_mS,
-								int thresholdForLongPress_mS,
+								uint16_t thresholdForPress_mS,
+								uint16_t thresholdForLongPress_mS,
 								void (*notificationFunction)(ButtonObjects_t, ButtonStatus_t),
 								ButtonDefaultState_t DefaultState)
 {
