@@ -153,6 +153,10 @@ ErrorCode_t Initialize_Button(ErrorCode_t (*readButtonFunction)(ButtonObjects_t)
 	{
 		return ERANGE;
 	}
+	if(thresholdForLongPress_mS <= thresholdForPress_mS)
+	{
+		return EINVAL;
+	}
 	
 	selves[ButtonID].readButtonState = readButtonFunction;
 	selves[ButtonID].buttonID = buttonToReference;
