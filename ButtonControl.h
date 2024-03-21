@@ -1,10 +1,11 @@
 #ifndef BUTTON_CONTROL_H
 #define	BUTTON_CONTROL_H
+/**********Include Headers************/
 #include "Config.h"
 #include <stddef.h>
 #include <stdint.h>
 
-/***********Add to config file header************/
+/**********Add to config.h************/
 /*
 	//Buttons Debounce Library
 	#define BUTTON_CONTROL_MAJOR	2
@@ -19,21 +20,20 @@ enum ButtonObjects_t
 }; 
 */
 
-/***************Add to config file***************/
+/**********Add to config.c************/
 /*
 #ifndef BUTTON_CONTROL_LIBRARY
 	#error "You need to include the Button Control library for this code to compile"
 #endif
- */
+*/
 
-/*************Semantic  Versioning***************/
+/********Semantic Versioning**********/
 #define BUTTON_CONTROL_HAL
 
-/*************Library Dependencies***************/
-/*************   Magic  Numbers   ***************/
+/***********Magic Numbers*************/
 #define NO_NOTIFICATION	NULL
 
-/*************    Enumeration     ***************/
+/************Enumeration**************/
 typedef enum
 {
 	NORMALLY_LOW,	
@@ -48,8 +48,8 @@ typedef enum
 	RELEASED
 } ButtonStatus_t;
 
-/***********      Data Structures    ************/
-/*************Function  Prototypes***************/
+/*********Object Definition***********/
+/****Module Function Prototypes*******/
 /**
  * Periodically called, takes care of the debouncing, state changes, and events that occur at a state change
  * @param time_mS How many mS have lapsed since the last time this function was called

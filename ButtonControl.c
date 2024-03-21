@@ -12,27 +12,19 @@
  * 	Compiler: C30 v3.31	IDE: MPLABx 3.05	Tool: ICD3	Computer: Intel Core2 Quad CPU 2.40 GHz, 5 GB RAM, Windows 10 64 bit Home 
  *	First version
 ******************************************************************************/
-/*************    Header Files    ***************/
+/************Header Files*************/
 #include "ButtonControl.h"
 #include <errno.h>
 
-/************* Library Definition ***************/
-/*************Semantic  Versioning***************/
-/*************Library Dependencies***************/
-/************Arbitrary Functionality*************/
-/*************   Magic  Numbers   ***************/
+/********Semantic Versioning**********/
+/***********Magic Numbers*************/
 #define ZEROED	0
 
-/*************    Enumeration     ***************/
-/***********  Structure Definitions  ************/
-/***********State Machine Definitions************/
-/*************  Global Variables  ***************/
-/*************Interrupt Prototypes***************/
-/*************Function  Prototypes***************/
-/************* Device Definitions ***************/
-/************* Module Definitions ***************/
-/************* Other  Definitions ***************/
-
+/************Enumerations*************/
+/**********Type Definitions***********/
+/*************Structures**************/
+/**********Global Variables***********/
+/*********Object Definition***********/
 static struct Button_Object
 {
 	ErrorCode_t (*readButtonState)(ButtonObjects_t uniqueIdentifier);
@@ -55,6 +47,8 @@ static struct Button_Object
 		.DefaultState = NORMALLY_LOW,
 	}};
 
+/*****Local Function Prototypes*******/
+/*********Main Body Of Code***********/
 void Buttons_Routine(unsigned long time_mS)
 {
 	int currentButton;
