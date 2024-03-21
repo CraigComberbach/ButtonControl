@@ -1,9 +1,9 @@
 #ifndef BUTTON_CONTROL_H
-#define	BUTTON_CONTROL_H
+#define BUTTON_CONTROL_H
 /**********Include Headers************/
-#include "Config.h"
 #include <stddef.h>
 #include <stdint.h>
+#include "Config.h"
 
 /**********Add to config.h************/
 /*
@@ -17,7 +17,7 @@ enum ButtonObjects_t
 {
 	BUTTON_,
 	NUMBER_OF_BUTTON_OBJECTS
-}; 
+};
 */
 
 /**********Add to config.c************/
@@ -31,12 +31,12 @@ enum ButtonObjects_t
 #define BUTTON_CONTROL_HAL
 
 /***********Magic Numbers*************/
-#define NO_NOTIFICATION	NULL
+#define NO_NOTIFICATION NULL
 
 /************Enumeration**************/
 typedef enum
 {
-	NORMALLY_LOW,	
+	NORMALLY_LOW,
 	NORMALLY_HIGH,
 } ButtonDefaultState_t;
 
@@ -74,11 +74,11 @@ void Buttons_Routine(unsigned long time_mS);
  * @param defaultState The resting level of a button
  */
 ErrorCode_t Initialize_Button(ErrorCode_t (*readButtonFunction)(Button_ObjectList_t),
-								uint8_t buttonToReference,
-								Button_ObjectList_t ButtonID,
-								uint16_t thresholdForPress_mS,
-								uint16_t thresholdForLongPress_mS,
-								void (*notificationFunction)(Button_ObjectList_t, ButtonStatus_t),
-								ButtonDefaultState_t DefaultState);
+							  uint8_t buttonToReference,
+							  Button_ObjectList_t ButtonID,
+							  uint16_t thresholdForPress_mS,
+							  uint16_t thresholdForLongPress_mS,
+							  void (*notificationFunction)(Button_ObjectList_t, ButtonStatus_t),
+							  ButtonDefaultState_t DefaultState);
 
 #endif

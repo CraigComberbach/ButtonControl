@@ -5,13 +5,13 @@
  * 	+Using standard libraries instead of custom declarations (NULL vs NULL_POINTER definition)
  *	+Header file is compliant with self compilation if required
  * v2.0.0	2015-12-21	Craig Comberbach
- * 	Compiler: C30 v3.31	IDE: MPLABx 3.05	Tool: ICD3	Computer: Intel Core2 Quad CPU 2.40 GHz, 5 GB RAM, Windows 10 64 bit Home 
+ * 	Compiler: C30 v3.31	IDE: MPLABx 3.05	Tool: ICD3	Computer: Intel Core2 Quad CPU 2.40 GHz, 5 GB RAM, Windows 10 64 bit Home
  * 	+Made a generic interface using function pointer so that any snippet of code can make use of this code
  * 	-Removed library dependency of Pins
  * v1.0.0	2015-12-21	Craig Comberbach
- * 	Compiler: C30 v3.31	IDE: MPLABx 3.05	Tool: ICD3	Computer: Intel Core2 Quad CPU 2.40 GHz, 5 GB RAM, Windows 10 64 bit Home 
+ * 	Compiler: C30 v3.31	IDE: MPLABx 3.05	Tool: ICD3	Computer: Intel Core2 Quad CPU 2.40 GHz, 5 GB RAM, Windows 10 64 bit Home
  *	First version
-******************************************************************************/
+ ******************************************************************************/
 /************Header Files*************/
 #include "ButtonControl.h"
 #include <errno.h>
@@ -19,7 +19,7 @@
 
 /********Semantic Versioning**********/
 /***********Magic Numbers*************/
-#define ZEROED	0
+#define ZEROED 0
 
 /************Enumerations*************/
 /**********Type Definitions***********/
@@ -38,18 +38,20 @@ static struct Button_Object
 	ButtonDefaultState_t DefaultState;
 
 	bool IsInitialized;
-} selves[NUMBER_OF_BUTTON_OBJECTS]  = {[0 ... NUMBER_OF_BUTTON_OBJECTS - 1] =
-	{
-		.readButtonState = NULL,
-		.notificationFunction = NULL,
-		.buttonID = 0,
-		.status = UNPRESSED,
-		.timer_mS = ZEROED,
-		.pressedThreshold_mS = 0,
-		.longPressedThreshold_mS = 0,
-		.DefaultState = NORMALLY_LOW,
-		.IsInitialized = false,
-	}};
+} selves[NUMBER_OF_BUTTON_OBJECTS] = {
+	[0 ... NUMBER_OF_BUTTON_OBJECTS - 1] =
+		{
+											  .readButtonState = NULL,
+											  .notificationFunction = NULL,
+											  .buttonID = 0,
+											  .status = UNPRESSED,
+											  .timer_mS = ZEROED,
+											  .pressedThreshold_mS = 0,
+											  .longPressedThreshold_mS = 0,
+											  .DefaultState = NORMALLY_LOW,
+											  .IsInitialized = false,
+											  }
+};
 
 /*****Local Function Prototypes*******/
 /*********Main Body Of Code***********/
@@ -62,7 +64,9 @@ void Buttons_Routine(unsigned long time_mS)
 	{
 		//Add time to button if pressed
 		if(selves[currentButton].readButtonState(selves[currentButton].buttonID) != selves[currentButton].DefaultState)
+		{
 			selves[currentButton].timer_mS += time_mS;
+		}
 		else
 		{
 			selves[currentButton].timer_mS = 0;
@@ -74,17 +78,23 @@ void Buttons_Routine(unsigned long time_mS)
 				case PRESSED:
 					selves[currentButton].status = RELEASED;
 					if(*selves[currentButton].notificationFunction != NO_NOTIFICATION)
+					{
 						selves[currentButton].notificationFunction(currentButton, selves[currentButton].status);
+					}
 					break;
 				case LONG_PRESSED:
 					selves[currentButton].status = RELEASED;
 					if(*selves[currentButton].notificationFunction != NO_NOTIFICATION)
+					{
 						selves[currentButton].notificationFunction(currentButton, selves[currentButton].status);
+					}
 					break;
 				case RELEASED:
 					selves[currentButton].status = UNPRESSED;
 					if(*selves[currentButton].notificationFunction != NO_NOTIFICATION)
+					{
 						selves[currentButton].notificationFunction(currentButton, selves[currentButton].status);
+					}
 					break;
 				default:
 					selves[currentButton].status = UNPRESSED;
@@ -106,7 +116,9 @@ void Buttons_Routine(unsigned long time_mS)
 				{
 					selves[currentButton].status = PRESSED;//Upgrade to next level!
 					if(*selves[currentButton].notificationFunction != NO_NOTIFICATION)
+					{
 						selves[currentButton].notificationFunction(currentButton, selves[currentButton].status);
+					}
 				}
 				break;
 			case PRESSED:
@@ -114,7 +126,9 @@ void Buttons_Routine(unsigned long time_mS)
 				{
 					selves[currentButton].status = LONG_PRESSED;//Upgrade to next level!
 					if(*selves[currentButton].notificationFunction != NO_NOTIFICATION)
+					{
 						selves[currentButton].notificationFunction(currentButton, selves[currentButton].status);
+					}
 				}
 				break;
 			case LONG_PRESSED:
@@ -127,17 +141,17 @@ void Buttons_Routine(unsigned long time_mS)
 				break;
 		}
 	}
-		
+
 	return;
 }
 
 ErrorCode_t Initialize_Button(ErrorCode_t (*readButtonFunction)(Button_ObjectList_t),
-								uint8_t buttonToReference,
-								Button_ObjectList_t ButtonID,
-								uint16_t thresholdForPress_mS,
-								uint16_t thresholdForLongPress_mS,
-								void (*notificationFunction)(Button_ObjectList_t, ButtonStatus_t),
-								ButtonDefaultState_t DefaultState)
+							  uint8_t buttonToReference,
+							  Button_ObjectList_t ButtonID,
+							  uint16_t thresholdForPress_mS,
+							  uint16_t thresholdForLongPress_mS,
+							  void (*notificationFunction)(Button_ObjectList_t, ButtonStatus_t),
+							  ButtonDefaultState_t DefaultState)
 {
 	if(readButtonFunction == NULL)
 	{
@@ -155,7 +169,7 @@ ErrorCode_t Initialize_Button(ErrorCode_t (*readButtonFunction)(Button_ObjectLis
 	{
 		return EINVAL;
 	}
-	
+
 	selves[ButtonID].readButtonState = readButtonFunction;
 	selves[ButtonID].buttonID = buttonToReference;
 	selves[ButtonID].status = UNPRESSED;
@@ -164,7 +178,7 @@ ErrorCode_t Initialize_Button(ErrorCode_t (*readButtonFunction)(Button_ObjectLis
 	selves[ButtonID].longPressedThreshold_mS = thresholdForLongPress_mS;
 	selves[ButtonID].notificationFunction = notificationFunction;
 	selves[ButtonID].DefaultState = DefaultState;
-	
+
 	return 0;
 }
 
@@ -178,7 +192,7 @@ ErrorCode_t Button_Aquire_Object(Button_Object_t **self, Button_ObjectList_t Obj
 	{
 		return EINVAL;
 	}
-	
+
 	*self = &selves[ObjectID];
 
 	return SUCCESS;
@@ -190,7 +204,7 @@ ErrorCode_t Button_Return_Object(Button_Object_t **self)
 	{
 		return EPERM;
 	}
-	
+
 	Button_Reset_Object(*self);
 	*self = NULL;
 
