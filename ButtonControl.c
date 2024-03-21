@@ -191,8 +191,28 @@ ErrorCode_t Button_Return_Object(Button_Object_t **self)
 		return EPERM;
 	}
 	
-	// // Button_Reset_Object(*self);
+	Button_Reset_Object(*self);
 	*self = NULL;
+
+	return SUCCESS;
+}
+
+ErrorCode_t Button_Reset_Object(Button_Object_t *self)
+{
+	if(self == NULL)
+	{
+		return EPERM;
+	}
+
+	self->readButtonState = NULL;
+	self->notificationFunction = NULL;
+	self->buttonID = 0;
+	self->status = UNPRESSED;
+	self->timer_mS = ZEROED;
+	self->pressedThreshold_mS = 0;
+	self->longPressedThreshold_mS = 0;
+	self->DefaultState = NORMALLY_LOW;
+	self->IsInitialized = false;
 
 	return SUCCESS;
 }

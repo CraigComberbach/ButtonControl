@@ -54,6 +54,7 @@ typedef struct Button_Object Button_Object_t;
 /****Module Function Prototypes*******/
 ErrorCode_t Button_Aquire_Object(Button_Object_t **self, Button_ObjectList_t ObjectID);
 ErrorCode_t Button_Return_Object(Button_Object_t **self);
+ErrorCode_t Button_Reset_Object(Button_Object_t *self);
 
 /**
  * Periodically called, takes care of the debouncing, state changes, and events that occur at a state change
