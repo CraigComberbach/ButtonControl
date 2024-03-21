@@ -49,7 +49,11 @@ typedef enum
 } ButtonStatus_t;
 
 /*********Object Definition***********/
+typedef struct Button_Object Button_Object_t;
+
 /****Module Function Prototypes*******/
+ErrorCode_t Button_Aquire_Object(Button_Object_t **self, Button_ObjectList_t ObjectID);
+
 /**
  * Periodically called, takes care of the debouncing, state changes, and events that occur at a state change
  * @param time_mS How many mS have lapsed since the last time this function was called

@@ -15,6 +15,7 @@
 /************Header Files*************/
 #include "ButtonControl.h"
 #include <errno.h>
+#include <stdbool.h>
 
 /********Semantic Versioning**********/
 /***********Magic Numbers*************/
@@ -35,6 +36,9 @@ static struct Button_Object
 	uint16_t longPressedThreshold_mS;
 	void (*notificationFunction)(Button_ObjectList_t, ButtonStatus_t);
 	ButtonDefaultState_t DefaultState;
+
+	bool IsInitialized;
+	bool IsOwned;
 } selves[NUMBER_OF_BUTTON_OBJECTS]  = {[0 ... NUMBER_OF_BUTTON_OBJECTS - 1] =
 	{
 		.readButtonState = NULL,
@@ -45,6 +49,8 @@ static struct Button_Object
 		.pressedThreshold_mS = 0,
 		.longPressedThreshold_mS = 0,
 		.DefaultState = NORMALLY_LOW,
+		.IsInitialized = false,
+		.IsOwned = false,
 	}};
 
 /*****Local Function Prototypes*******/
@@ -162,4 +168,25 @@ ErrorCode_t Initialize_Button(ErrorCode_t (*readButtonFunction)(Button_ObjectLis
 	selves[ButtonID].DefaultState = DefaultState;
 	
 	return 0;
+}
+
+ErrorCode_t Button_Aquire_Object(Button_Object_t **self, Button_ObjectList_t ObjectID)
+{
+	if((ObjectID < 0) || (ObjectID >= NUMBER_OF_BUTTON_OBJECTS))
+	{
+		return ERANGE;
+	}
+	if(self != NULL)
+	{
+		return EINVAL;
+	}
+	if(selves[ObjectID].IsOwned == false)
+	{
+		return EBUSY;
+	}
+	
+	*self = &selves[ObjectID];
+	selves[ObjectID].IsOwned = true;
+
+	return SUCCESS;
 }
