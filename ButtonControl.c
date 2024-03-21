@@ -38,7 +38,6 @@ static struct Button_Object
 	ButtonDefaultState_t DefaultState;
 
 	bool IsInitialized;
-	bool IsOwned;
 } selves[NUMBER_OF_BUTTON_OBJECTS]  = {[0 ... NUMBER_OF_BUTTON_OBJECTS - 1] =
 	{
 		.readButtonState = NULL,
@@ -50,7 +49,6 @@ static struct Button_Object
 		.longPressedThreshold_mS = 0,
 		.DefaultState = NORMALLY_LOW,
 		.IsInitialized = false,
-		.IsOwned = false,
 	}};
 
 /*****Local Function Prototypes*******/
@@ -176,17 +174,25 @@ ErrorCode_t Button_Aquire_Object(Button_Object_t **self, Button_ObjectList_t Obj
 	{
 		return ERANGE;
 	}
-	if(self != NULL)
+	if(*self != NULL)
 	{
 		return EINVAL;
 	}
-	if(selves[ObjectID].IsOwned == false)
-	{
-		return EBUSY;
-	}
 	
 	*self = &selves[ObjectID];
-	selves[ObjectID].IsOwned = true;
+
+	return SUCCESS;
+}
+
+ErrorCode_t Button_Return_Object(Button_Object_t **self)
+{
+	if(*self == NULL)
+	{
+		return EPERM;
+	}
+	
+	// // Button_Reset_Object(*self);
+	*self = NULL;
 
 	return SUCCESS;
 }
