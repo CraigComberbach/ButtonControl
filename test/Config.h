@@ -11,7 +11,8 @@
 //Buttons
 typedef enum
 {
-	BUTTON_,
+	BUTTON_TEST1,
+	BUTTON_TEST2,
 	NUMBER_OF_BUTTON_OBJECTS
 } Button_ObjectList_t;
 

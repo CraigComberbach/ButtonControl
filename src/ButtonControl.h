@@ -60,7 +60,7 @@ ErrorCode_t Button_Reset_Object(Button_Object_t *self);
  * Periodically called, takes care of the debouncing, state changes, and events that occur at a state change
  * @param time_mS How many mS have lapsed since the last time this function was called
  */
-void Buttons_Routine(unsigned long time_mS);
+void Buttons_Routine(uint32_t time_mS);
 
 /**
  * Initialize an individual button to behave according to a set of runtime parameters

@@ -9,7 +9,7 @@ ErrorCode_t ReturnedValue;
 /**********Happy Path Definitions**********/
 ErrorCode_t (*Happy_ReadButtonFunction)(Button_ObjectList_t) = NULL;
 uint8_t Happy_ButtonToReference = 3;
-Button_ObjectList_t Happy_ButtonID = 0;
+Button_ObjectList_t Happy_ButtonID = BUTTON_TEST1;
 uint16_t Happy_ThresholdForPress_mS = 5;
 uint16_t Happy_ThresholdForLongPress_mS = 7;
 void (*Happy_NotificationFunction)(Button_ObjectList_t, ButtonStatus_t) = NO_NOTIFICATION;

@@ -55,9 +55,9 @@ static struct Button_Object
 
 /*****Local Function Prototypes*******/
 /*********Main Body Of Code***********/
-void Buttons_Routine(unsigned long time_mS)
+void Buttons_Routine(uint32_t time_mS)
 {
-	int currentButton;
+	Button_ObjectList_t currentButton;
 
 	//Update all buttons
 	for(currentButton = 0; currentButton < NUMBER_OF_BUTTON_OBJECTS; currentButton++)
