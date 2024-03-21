@@ -16,7 +16,7 @@
 enum ButtonObjects_t
 {
 	BUTTON_,
-	NUMBER_OF_BUTTONS
+	NUMBER_OF_BUTTON_OBJECTS
 }; 
 */
 
@@ -67,12 +67,12 @@ void Buttons_Routine(unsigned long time_mS);
  * @param notificationFunction A pointer to a function to be called when a buttons state changes
  * @param defaultState The resting level of a button
  */
-ErrorCode_t Initialize_Button(ErrorCode_t (*readButtonFunction)(ButtonObjects_t),
+ErrorCode_t Initialize_Button(ErrorCode_t (*readButtonFunction)(Button_ObjectList_t),
 								uint8_t buttonToReference,
-								ButtonObjects_t ButtonID,
+								Button_ObjectList_t ButtonID,
 								uint16_t thresholdForPress_mS,
 								uint16_t thresholdForLongPress_mS,
-								void (*notificationFunction)(ButtonObjects_t, ButtonStatus_t),
+								void (*notificationFunction)(Button_ObjectList_t, ButtonStatus_t),
 								ButtonDefaultState_t DefaultState);
 
 #endif

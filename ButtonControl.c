@@ -27,15 +27,15 @@
 /*********Object Definition***********/
 static struct Button_Object
 {
-	ErrorCode_t (*readButtonState)(ButtonObjects_t uniqueIdentifier);
-	ButtonObjects_t buttonID;
+	ErrorCode_t (*readButtonState)(Button_ObjectList_t uniqueIdentifier);
+	Button_ObjectList_t buttonID;
 	ButtonStatus_t status;
 	unsigned int timer_mS;
 	uint16_t pressedThreshold_mS;
 	uint16_t longPressedThreshold_mS;
-	void (*notificationFunction)(ButtonObjects_t, ButtonStatus_t);
+	void (*notificationFunction)(Button_ObjectList_t, ButtonStatus_t);
 	ButtonDefaultState_t DefaultState;
-} selves[NUMBER_OF_BUTTONS]  = {[0 ... NUMBER_OF_BUTTONS - 1] =
+} selves[NUMBER_OF_BUTTON_OBJECTS]  = {[0 ... NUMBER_OF_BUTTON_OBJECTS - 1] =
 	{
 		.readButtonState = NULL,
 		.notificationFunction = NULL,
@@ -54,7 +54,7 @@ void Buttons_Routine(unsigned long time_mS)
 	int currentButton;
 
 	//Update all buttons
-	for(currentButton = 0; currentButton < NUMBER_OF_BUTTONS; currentButton++)
+	for(currentButton = 0; currentButton < NUMBER_OF_BUTTON_OBJECTS; currentButton++)
 	{
 		//Add time to button if pressed
 		if(selves[currentButton].readButtonState(selves[currentButton].buttonID) != selves[currentButton].DefaultState)
@@ -127,19 +127,19 @@ void Buttons_Routine(unsigned long time_mS)
 	return;
 }
 
-ErrorCode_t Initialize_Button(ErrorCode_t (*readButtonFunction)(ButtonObjects_t),
+ErrorCode_t Initialize_Button(ErrorCode_t (*readButtonFunction)(Button_ObjectList_t),
 								uint8_t buttonToReference,
-								ButtonObjects_t ButtonID,
+								Button_ObjectList_t ButtonID,
 								uint16_t thresholdForPress_mS,
 								uint16_t thresholdForLongPress_mS,
-								void (*notificationFunction)(ButtonObjects_t, ButtonStatus_t),
+								void (*notificationFunction)(Button_ObjectList_t, ButtonStatus_t),
 								ButtonDefaultState_t DefaultState)
 {
 	if(readButtonFunction == NULL)
 	{
 		return EINVAL;
 	}
-	if((ButtonID < 0) || (ButtonID >= NUMBER_OF_BUTTONS))
+	if((ButtonID < 0) || (ButtonID >= NUMBER_OF_BUTTON_OBJECTS))
 	{
 		return ERANGE;
 	}
