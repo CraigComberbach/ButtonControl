@@ -152,6 +152,7 @@ void test_Initialize_Button_LongpressThresholdIsGreaterThanPressThreshold(void)
 void test_Button_Aquire_Object_HappyPath(void)
 {
 	Button_Return_Object(&ButtonObject);
+
 	ReturnedValue = Button_Aquire_Object(&ButtonObject, Happy_ButtonID);
 
 	TEST_ASSERT_NOT_NULL(ButtonObject);
@@ -161,6 +162,7 @@ void test_Button_Aquire_Object_HappyPath(void)
 void test_Button_Aquire_Object_InvalidButtonID_Low(void)
 {
 	Button_Return_Object(&ButtonObject);
+
 	ReturnedValue = Button_Aquire_Object(&ButtonObject, -1);
 
 	TEST_ASSERT_NULL(ButtonObject);
@@ -170,6 +172,7 @@ void test_Button_Aquire_Object_InvalidButtonID_Low(void)
 void test_Button_Aquire_Object_InvalidButtonID_High(void)
 {
 	Button_Return_Object(&ButtonObject);
+
 	ReturnedValue = Button_Aquire_Object(&ButtonObject, NUMBER_OF_BUTTON_OBJECTS);
 
 	TEST_ASSERT_NULL(ButtonObject);
@@ -189,6 +192,7 @@ void test_Button_Aquire_Object_ButtonObjectNotNull(void)
 void test_Button_Aquire_Object_AlreadyOwned(void)
 {
 	Button_Return_Object(&ButtonObject);
+
 	Button_Aquire_Object(&ButtonObject, Happy_ButtonID);
 	ReturnedValue = Button_Aquire_Object(&ButtonObject, Happy_ButtonID);
 
@@ -205,6 +209,7 @@ void test_Button_Return_Object_HappyPath(void)
 void test_Button_Return_Object_AlreadyReturned(void)
 {
 	Button_Return_Object(&ButtonObject);
+
 	ReturnedValue = Button_Return_Object(&ButtonObject);
 
 	TEST_ASSERT_TRUE(ReturnedValue == EPERM);
@@ -220,6 +225,7 @@ void test_Button_Reset_Object_HappyPath(void)
 void test_Button_Reset_Object_SelfIsNull(void)
 {
 	Button_Return_Object(&ButtonObject);
+
 	ReturnedValue = Button_Reset_Object(ButtonObject);
 
 	TEST_ASSERT_TRUE(ReturnedValue == EPERM);
@@ -228,6 +234,7 @@ void test_Button_Reset_Object_SelfIsNull(void)
 void test_Button_Current_State_HappyPath(void)
 {
 	ButtonState_t State = 0;
+
 	ReturnedValue = Button_Current_State(ButtonObject, &State);
 
 	TEST_ASSERT_TRUE(State == UNPRESSED);
@@ -237,9 +244,8 @@ void test_Button_Current_State_HappyPath(void)
 void test_Button_Current_State_SelfIsNull(void)
 {
 	ButtonState_t Dummy = -1;
-
 	Button_Return_Object(&ButtonObject);
-	TEST_ASSERT_NULL(ButtonObject);
+
 	ReturnedValue = Button_Current_State(ButtonObject, &Dummy);
 
 	TEST_ASSERT_TRUE(Dummy == -1);
