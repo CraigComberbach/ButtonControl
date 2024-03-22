@@ -73,7 +73,7 @@ void Buttons_Routine(uint32_t time_mS);
  * @param buttonValue The name of the button, setup in config.h
  * @param thresholdForPress_mS How many mS before a press becomes official
  * @param thresholdForLongPress_mS How many mS before a long press becomes official
- * @param notificationFunction A pointer to a function to be called when a buttons state changes
+ * @param NotificationFunction A pointer to a function to be called when a buttons state changes
  * @param defaultState The resting level of a button
  */
 ErrorCode_t Initialize_Button(ErrorCode_t (*readButtonFunction)(Button_ObjectList_t),
@@ -81,7 +81,7 @@ ErrorCode_t Initialize_Button(ErrorCode_t (*readButtonFunction)(Button_ObjectLis
 							  Button_ObjectList_t ButtonID,
 							  uint16_t thresholdForPress_mS,
 							  uint16_t thresholdForLongPress_mS,
-							  void (*notificationFunction)(Button_ObjectList_t, ButtonState_t),
+							  void (*NotificationFunction)(Button_ObjectList_t, ButtonState_t),
 							  ButtonDefaultState_t DefaultState);
 
 #endif
