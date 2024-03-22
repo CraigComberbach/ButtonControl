@@ -7,13 +7,13 @@
 ErrorCode_t ReturnedValue;
 
 /**********Happy Path Definitions**********/
-ErrorCode_t (*Happy_ReadButtonFunction)(Button_ObjectList_t) = NULL;
-uint8_t Happy_ButtonToReference = 3;
-Button_ObjectList_t Happy_ButtonID = BUTTON_TEST1;
-uint16_t Happy_ThresholdForPress_mS = 5;
-uint16_t Happy_ThresholdForLongPress_mS = 7;
-void (*Happy_NotificationFunction)(Button_ObjectList_t, ButtonState_t) = NO_NOTIFICATION;
-ButtonDefaultState_t Happy_DefaultState = NORMALLY_LOW;
+ErrorCode_t (*Happy_ReadButtonFunction)(Button_ObjectList_t);
+uint8_t Happy_ButtonToReference;
+Button_ObjectList_t Happy_ButtonID;
+uint16_t Happy_ThresholdForPress_mS;
+uint16_t Happy_ThresholdForLongPress_mS;
+void (*Happy_NotificationFunction)(Button_ObjectList_t, ButtonState_t);
+ButtonDefaultState_t Happy_DefaultState;
 Button_Object_t *ButtonObject = NULL;
 
 /*************Fake Functions************/
@@ -35,10 +35,10 @@ void setUp(void)
 	Happy_ReadButtonFunction = &Fake_ReadButtonFunction;
 	Happy_NotificationFunction = &Fake_NotificationFunction;
 	Happy_ButtonToReference = 3;
-	Button_ObjectList_t Happy_ButtonID = 0;
+	Button_ObjectList_t Happy_ButtonID = BUTTON_TEST1;
 	Happy_ThresholdForPress_mS = 5;
 	Happy_ThresholdForLongPress_mS = 7;
-	Happy_DefaultState = NORMALLY_LOW;
+	Happy_DefaultState = NORMALLY_HIGH;
 
 	Button_Aquire_Object(&ButtonObject, Happy_ButtonID);
 }
