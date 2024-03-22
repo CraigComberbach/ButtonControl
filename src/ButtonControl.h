@@ -46,7 +46,7 @@ typedef enum
 	PRESSED,
 	LONG_PRESSED,
 	RELEASED
-} ButtonStatus_t;
+} ButtonState_t;
 
 /*********Object Definition***********/
 typedef struct Button_Object Button_Object_t;
@@ -79,7 +79,7 @@ ErrorCode_t Initialize_Button(ErrorCode_t (*readButtonFunction)(Button_ObjectLis
 							  Button_ObjectList_t ButtonID,
 							  uint16_t thresholdForPress_mS,
 							  uint16_t thresholdForLongPress_mS,
-							  void (*notificationFunction)(Button_ObjectList_t, ButtonStatus_t),
+							  void (*notificationFunction)(Button_ObjectList_t, ButtonState_t),
 							  ButtonDefaultState_t DefaultState);
 
 #endif

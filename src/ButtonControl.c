@@ -30,11 +30,11 @@ static struct Button_Object
 {
 	ErrorCode_t (*readButtonState)(Button_ObjectList_t uniqueIdentifier);
 	Button_ObjectList_t buttonID;
-	ButtonStatus_t status;
+	ButtonState_t status;
 	unsigned int timer_mS;
 	uint16_t pressedThreshold_mS;
 	uint16_t longPressedThreshold_mS;
-	void (*notificationFunction)(Button_ObjectList_t, ButtonStatus_t);
+	void (*notificationFunction)(Button_ObjectList_t, ButtonState_t);
 	ButtonDefaultState_t DefaultState;
 
 	bool IsInitialized;
@@ -175,7 +175,7 @@ ErrorCode_t Initialize_Button(ErrorCode_t (*readButtonFunction)(Button_ObjectLis
 							  Button_ObjectList_t ButtonID,
 							  uint16_t thresholdForPress_mS,
 							  uint16_t thresholdForLongPress_mS,
-							  void (*notificationFunction)(Button_ObjectList_t, ButtonStatus_t),
+							  void (*notificationFunction)(Button_ObjectList_t, ButtonState_t),
 							  ButtonDefaultState_t DefaultState)
 {
 	if(readButtonFunction == NULL)

@@ -12,19 +12,19 @@ uint8_t Happy_ButtonToReference = 3;
 Button_ObjectList_t Happy_ButtonID = BUTTON_TEST1;
 uint16_t Happy_ThresholdForPress_mS = 5;
 uint16_t Happy_ThresholdForLongPress_mS = 7;
-void (*Happy_NotificationFunction)(Button_ObjectList_t, ButtonStatus_t) = NO_NOTIFICATION;
+void (*Happy_NotificationFunction)(Button_ObjectList_t, ButtonState_t) = NO_NOTIFICATION;
 ButtonDefaultState_t Happy_DefaultState = NORMALLY_LOW;
 Button_Object_t *ButtonObject = NULL;
 
 /*************Fake Functions************/
 ErrorCode_t Fake_ReadButtonFunction(Button_ObjectList_t dummy);
-void Fake_NotificationFunction(Button_ObjectList_t Object, ButtonStatus_t Status);
+void Fake_NotificationFunction(Button_ObjectList_t Object, ButtonState_t Status);
 
 ErrorCode_t Fake_ReadButtonFunction(Button_ObjectList_t dummy)
 {
 	return SUCCESS;
 }
-void Fake_NotificationFunction(Button_ObjectList_t Object, ButtonStatus_t Status)
+void Fake_NotificationFunction(Button_ObjectList_t Object, ButtonState_t Status)
 {
 	return;
 }
