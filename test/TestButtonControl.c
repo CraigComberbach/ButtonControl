@@ -12,14 +12,11 @@ extern uint16_t TestWrapperButtonControl_Selves_PressedThreshold_mS(Button_Objec
 extern uint16_t TestWrapperButtonControl_Selves_LongPressedThreshold_mS(Button_ObjectList_t ID);
 extern ButtonDefaultState_t TestWrapperButtonControl_Selves_DefaultState(Button_ObjectList_t ID);
 extern bool TestWrapperButtonControl_Selves_IsInitialized(Button_ObjectList_t ID);
-
 extern ErrorCode_t (*ReadButtonFunction)(Button_ObjectList_t ID);
 TestWrapperButtonControl_Selves_ReadButtonFunction(Button_ObjectList_t ID);
 extern void (*NotificationFunction)(Button_ObjectList_t, ButtonState_t);
 TestWrapperButtonControl_Selves_NotificationFunction(Button_ObjectList_t ID);
-//extern ReadButton_ptr_t TestWrapperButtonControl_Selves_ReadButtonFunction(Button_ObjectList_t ID);
-//extern Notification_ptr_t TestWrapperButtonControl_Selves_NotificationFunction(Button_ObjectList_t ID);
-extern bool TestWrapperButtonControl_Update_State_Machine(uint32_t time_mS);
+extern bool TestWrapperButtonControl_Update_State_Machine(Button_Object_t *self, uint32_t time_mS);
 
 /**********Global Variables**********/
 ErrorCode_t ReturnedValue;
@@ -270,14 +267,14 @@ void test_Button_Current_State_SelfIsNull(void)
 
 void test_Update_State_Machine_NoElapsedTime(void)
 {
-	ReturnedValue = TestWrapperButtonControl_Update_State_Machine(0);
+	ReturnedValue = TestWrapperButtonControl_Update_State_Machine(&ButtonObject, 0);
 
 	TEST_ASSERT_TRUE(ReturnedValue == false);
 }
 
 void test_Update_State_Machine_NotEnoughElapsedTime(void)
 {
-	ReturnedValue = TestWrapperButtonControl_Update_State_Machine(Happy_ThresholdForPress_mS - 1);
+	ReturnedValue = TestWrapperButtonControl_Update_State_Machine(&ButtonObject, Happy_ThresholdForPress_mS - 1);
 
 	TEST_ASSERT_TRUE(ReturnedValue == false);
 }

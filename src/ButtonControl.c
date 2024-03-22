@@ -57,37 +57,43 @@ static struct Button_Object
 };
 
 /*****Local Function Prototypes*******/
-static bool Update_State_Machine(uint32_t time_mS);
+static bool Update_State_Machine(Button_Object_t *self, uint32_t time_mS);
 
 /*********Main Body Of Code***********/
 void Buttons_Routine(uint32_t time_mS)
 {
 	Button_ObjectList_t currentButton;
+	bool StateMachineUpdated;
 
-	//Update all buttons
 	for(currentButton = 0; currentButton < NUMBER_OF_BUTTON_OBJECTS; currentButton++)
 	{
-		switch(selves[currentButton].State)
+		StateMachineUpdated = Update_State_Machine(&selves[currentButton], time_mS);
+		if((StateMachineUpdated == true) && (selves[currentButton].NotificationFunction != NO_NOTIFICATION))
 		{
-			case UNPRESSED:
-				break;
-			case PRESSED:
-				break;
-			case LONG_PRESSED:
-				break;
-			case RELEASED:
-				break;
-			default:
-				break;
+			selves[currentButton].NotificationFunction(currentButton, selves[currentButton].State);
 		}
 	}
 
 	return;
 }
 
-static bool Update_State_Machine(uint32_t time_mS)
+static bool Update_State_Machine(Button_Object_t *self, uint32_t time_mS)
 {
 	bool StateMachineChanged = false;
+	switch(self->State)
+	{
+		case UNPRESSED:
+			break;
+		case PRESSED:
+			break;
+		case LONG_PRESSED:
+			break;
+		case RELEASED:
+			break;
+		default:
+			break;
+	}
+
 	return StateMachineChanged;
 }
 
@@ -290,7 +296,7 @@ ErrorCode_t (*ReadButtonFunction)(Button_ObjectList_t ID);
 TestWrapperButtonControl_Selves_ReadButtonFunction(Button_ObjectList_t ID);
 void (*NotificationFunction)(Button_ObjectList_t, ButtonState_t);
 TestWrapperButtonControl_Selves_NotificationFunction(Button_ObjectList_t ID);
-bool TestWrapperButtonControl_Update_State_Machine(uint32_t time_mS);
+bool TestWrapperButtonControl_Update_State_Machine(Button_Object_t *self, uint32_t time_mS);
 
 ButtonState_t TestWrapperButtonControl_Selves_State(Button_ObjectList_t ID)
 {
@@ -334,8 +340,8 @@ TestWrapperButtonControl_Selves_NotificationFunction(Button_ObjectList_t ID)
 	return selves[ID].NotificationFunction;
 }
 
-bool TestWrapperButtonControl_Update_State_Machine(uint32_t time_mS)
+bool TestWrapperButtonControl_Update_State_Machine(Button_Object_t *self, uint32_t time_mS)
 {
-	return Update_State_Machine(time_mS);
+	return Update_State_Machine(self, time_mS);
 }
 #endif
