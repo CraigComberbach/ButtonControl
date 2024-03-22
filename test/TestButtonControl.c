@@ -1,12 +1,28 @@
 #include <errno.h>
+#include <stdbool.h>
 #include <stddef.h>
 #include "ButtonControl.h"
 #include "UnityHelper.h"
 #include "unity.h"
 
-ErrorCode_t ReturnedValue;
+/**********Test Wrappers**********/
+extern ButtonState_t TestWrapperButtonControl_Selves_State(Button_ObjectList_t ID);
+extern uint16_t TestWrapperButtonControl_Selves_Timer_mS(Button_ObjectList_t ID);
+extern uint16_t TestWrapperButtonControl_Selves_PressedThreshold_mS(Button_ObjectList_t ID);
+extern uint16_t TestWrapperButtonControl_Selves_LongPressedThreshold_mS(Button_ObjectList_t ID);
+extern ButtonDefaultState_t TestWrapperButtonControl_Selves_DefaultState(Button_ObjectList_t ID);
+extern bool TestWrapperButtonControl_Selves_IsInitialized(Button_ObjectList_t ID);
 
-/**********Happy Path Definitions**********/
+extern ErrorCode_t (*ReadButtonFunction)(Button_ObjectList_t ID);
+TestWrapperButtonControl_Selves_ReadButtonFunction(Button_ObjectList_t ID);
+extern void (*NotificationFunction)(Button_ObjectList_t, ButtonState_t);
+TestWrapperButtonControl_Selves_NotificationFunction(Button_ObjectList_t ID);
+//extern ReadButton_ptr_t TestWrapperButtonControl_Selves_ReadButtonFunction(Button_ObjectList_t ID);
+//extern Notification_ptr_t TestWrapperButtonControl_Selves_NotificationFunction(Button_ObjectList_t ID);
+extern bool TestWrapperButtonControl_Update_State_Machine(uint32_t time_mS);
+
+/**********Global Variables**********/
+ErrorCode_t ReturnedValue;
 ErrorCode_t (*Happy_ReadButtonFunction)(Button_ObjectList_t);
 uint8_t Happy_ButtonToReference;
 Button_ObjectList_t Happy_ButtonID;
@@ -250,4 +266,18 @@ void test_Button_Current_State_SelfIsNull(void)
 
 	TEST_ASSERT_TRUE(Dummy == -1);
 	TEST_ASSERT_TRUE(ReturnedValue == EPERM);
+}
+
+void test_Update_State_Machine_NoElapsedTime(void)
+{
+	ReturnedValue = TestWrapperButtonControl_Update_State_Machine(0);
+
+	TEST_ASSERT_TRUE(ReturnedValue == false);
+}
+
+void test_Update_State_Machine_NotEnoughElapsedTime(void)
+{
+	ReturnedValue = TestWrapperButtonControl_Update_State_Machine(Happy_ThresholdForPress_mS - 1);
+
+	TEST_ASSERT_TRUE(ReturnedValue == false);
 }

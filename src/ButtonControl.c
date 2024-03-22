@@ -23,18 +23,21 @@
 
 /************Enumerations*************/
 /**********Type Definitions***********/
+typedef ErrorCode_t (*ReadButton_ptr_t)(Button_ObjectList_t ID);
+typedef void (*Notification_ptr_t)(Button_ObjectList_t, ButtonState_t);
+
 /*************Structures**************/
 /**********Global Variables***********/
 /*********Object Definition***********/
 static struct Button_Object
 {
-	ErrorCode_t (*ReadButtonFunction)(Button_ObjectList_t ID);
+	ReadButton_ptr_t ReadButtonFunction;
+	Notification_ptr_t NotificationFunction;
 	Button_ObjectList_t ID;
 	ButtonState_t State;
-	unsigned int Timer_mS;
+	uint32_t Timer_mS;
 	uint16_t PressedThreshold_mS;
 	uint16_t LongPressedThreshold_mS;
-	void (*NotificationFunction)(Button_ObjectList_t, ButtonState_t);
 	ButtonDefaultState_t DefaultState;
 
 	bool IsInitialized;
@@ -54,6 +57,8 @@ static struct Button_Object
 };
 
 /*****Local Function Prototypes*******/
+static bool Update_State_Machine(uint32_t time_mS);
+
 /*********Main Body Of Code***********/
 void Buttons_Routine(uint32_t time_mS)
 {
@@ -78,6 +83,12 @@ void Buttons_Routine(uint32_t time_mS)
 	}
 
 	return;
+}
+
+static bool Update_State_Machine(uint32_t time_mS)
+{
+	bool StateMachineChanged = false;
+	return StateMachineChanged;
 }
 
 //void Buttons_Routine_Deprecated(uint32_t time_mS)
@@ -267,3 +278,64 @@ ErrorCode_t Button_Current_State(Button_Object_t *self, ButtonState_t *State)
 
 	return SUCCESS;
 }
+
+#ifdef ENABLE_BUTTON_CONTROL_TEST_WRAPPERS
+ButtonState_t TestWrapperButtonControl_Selves_State(Button_ObjectList_t ID);
+uint16_t TestWrapperButtonControl_Selves_Timer_mS(Button_ObjectList_t ID);
+uint16_t TestWrapperButtonControl_Selves_PressedThreshold_mS(Button_ObjectList_t ID);
+uint16_t TestWrapperButtonControl_Selves_LongPressedThreshold_mS(Button_ObjectList_t ID);
+ButtonDefaultState_t TestWrapperButtonControl_Selves_DefaultState(Button_ObjectList_t ID);
+bool TestWrapperButtonControl_Selves_IsInitialized(Button_ObjectList_t ID);
+ErrorCode_t (*ReadButtonFunction)(Button_ObjectList_t ID);
+TestWrapperButtonControl_Selves_ReadButtonFunction(Button_ObjectList_t ID);
+void (*NotificationFunction)(Button_ObjectList_t, ButtonState_t);
+TestWrapperButtonControl_Selves_NotificationFunction(Button_ObjectList_t ID);
+bool TestWrapperButtonControl_Update_State_Machine(uint32_t time_mS);
+
+ButtonState_t TestWrapperButtonControl_Selves_State(Button_ObjectList_t ID)
+{
+	return selves[ID].State;
+}
+
+uint16_t TestWrapperButtonControl_Selves_Timer_mS(Button_ObjectList_t ID)
+{
+	return selves[ID].Timer_mS;
+}
+
+uint16_t TestWrapperButtonControl_Selves_PressedThreshold_mS(Button_ObjectList_t ID)
+{
+	return selves[ID].PressedThreshold_mS;
+}
+
+uint16_t TestWrapperButtonControl_Selves_LongPressedThreshold_mS(Button_ObjectList_t ID)
+{
+	return selves[ID].LongPressedThreshold_mS;
+}
+
+ButtonDefaultState_t TestWrapperButtonControl_Selves_DefaultState(Button_ObjectList_t ID)
+{
+	return selves[ID].DefaultState;
+}
+
+bool TestWrapperButtonControl_Selves_IsInitialized(Button_ObjectList_t ID)
+{
+	return selves[ID].IsInitialized;
+}
+
+ErrorCode_t (*ReadButtonFunction)(Button_ObjectList_t ID);
+TestWrapperButtonControl_Selves_ReadButtonFunction(Button_ObjectList_t ID)
+{
+	return selves[ID].ReadButtonFunction;
+}
+
+void (*NotificationFunction)(Button_ObjectList_t, ButtonState_t);
+TestWrapperButtonControl_Selves_NotificationFunction(Button_ObjectList_t ID)
+{
+	return selves[ID].NotificationFunction;
+}
+
+bool TestWrapperButtonControl_Update_State_Machine(uint32_t time_mS)
+{
+	return Update_State_Machine(time_mS);
+}
+#endif

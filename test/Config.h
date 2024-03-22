@@ -3,6 +3,8 @@
 
 #include <stdint.h>
 
+#define ENABLE_BUTTON_CONTROL_TEST_WRAPPERS
+
 //Buttons Debounce Library
 #define BUTTON_CONTROL_MAJOR 2
 #define BUTTON_CONTROL_MINOR 0
@@ -19,4 +21,4 @@ typedef enum
 typedef int_fast8_t ErrorCode_t;
 #define SUCCESS 0
 
-#endif CONFIG_H//CONFIG_H
+#endif//CONFIG_H
