@@ -33,7 +33,6 @@ static struct Button_Object
 {
 	ReadButton_ptr_t ReadButtonFunction;
 	Notification_ptr_t NotificationFunction;
-	Button_ObjectList_t ID;
 	ButtonState_t State;
 	uint32_t Timer_mS;
 	uint16_t PressedThreshold_mS;
@@ -46,7 +45,6 @@ static struct Button_Object
 		{
 											  .ReadButtonFunction = NULL,
 											  .NotificationFunction = NULL,
-											  .ID = 0,
 											  .State = UNPRESSED,
 											  .Timer_mS = ZEROED,
 											  .PressedThreshold_mS = 0,
@@ -213,7 +211,6 @@ ErrorCode_t Initialize_Button(ErrorCode_t (*readButtonFunction)(Button_ObjectLis
 	}
 
 	selves[ButtonID].ReadButtonFunction = readButtonFunction;
-	selves[ButtonID].ID = buttonToReference;
 	selves[ButtonID].State = UNPRESSED;
 	selves[ButtonID].Timer_mS = ZEROED;
 	selves[ButtonID].PressedThreshold_mS = thresholdForPress_mS;
@@ -262,7 +259,6 @@ ErrorCode_t Button_Reset_Object(Button_Object_t *self)
 
 	self->ReadButtonFunction = NULL;
 	self->NotificationFunction = NULL;
-	self->ID = 0;
 	self->State = UNPRESSED;
 	self->Timer_mS = ZEROED;
 	self->PressedThreshold_mS = 0;
