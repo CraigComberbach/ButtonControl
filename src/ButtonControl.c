@@ -57,6 +57,26 @@ static struct Button_Object
 /*********Main Body Of Code***********/
 void Buttons_Routine(uint32_t time_mS)
 {
+	Button_ObjectList_t currentButton;
+
+	//Update all buttons
+	for(currentButton = 0; currentButton < NUMBER_OF_BUTTON_OBJECTS; currentButton++)
+	{
+		switch(selves[currentButton].status)
+		{
+			case UNPRESSED:
+				break;
+			case PRESSED:
+				break;
+			case LONG_PRESSED:
+				break;
+			case RELEASED:
+				break;
+			default:
+				break;
+		}
+	}
+
 	return;
 }
 
