@@ -61,6 +61,7 @@ ErrorCode_t Button_Reset_Object(Button_Object_t *self);
  * @param time_mS How many mS have lapsed since the last time this function was called
  */
 void Buttons_Routine(uint32_t time_mS);
+//void Buttons_Routine_Deprecated(uint32_t time_mS);
 
 /**
  * Initialize an individual button to behave according to a set of runtime parameters
