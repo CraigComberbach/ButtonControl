@@ -56,6 +56,8 @@ ErrorCode_t Button_Aquire_Object(Button_Object_t **self, Button_ObjectList_t Obj
 ErrorCode_t Button_Return_Object(Button_Object_t **self);
 ErrorCode_t Button_Reset_Object(Button_Object_t *self);
 
+ErrorCode_t Button_Current_State(Button_Object_t *self, ButtonState_t *State);
+
 /**
  * Periodically called, takes care of the debouncing, state changes, and events that occur at a state change
  * @param time_mS How many mS have lapsed since the last time this function was called

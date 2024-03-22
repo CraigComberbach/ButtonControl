@@ -224,3 +224,24 @@ void test_Button_Reset_Object_SelfIsNull(void)
 
 	TEST_ASSERT_TRUE(ReturnedValue == EPERM);
 }
+
+void test_Button_Current_State_HappyPath(void)
+{
+	ButtonState_t State = 0;
+	ReturnedValue = Button_Current_State(ButtonObject, &State);
+
+	TEST_ASSERT_TRUE(State == UNPRESSED);
+	TEST_ASSERT_TRUE(ReturnedValue == SUCCESS);
+}
+
+void test_Button_Current_State_SelfIsNull(void)
+{
+	ButtonState_t Dummy = -1;
+
+	Button_Return_Object(&ButtonObject);
+	TEST_ASSERT_NULL(ButtonObject);
+	ReturnedValue = Button_Current_State(ButtonObject, &Dummy);
+
+	TEST_ASSERT_TRUE(Dummy == -1);
+	TEST_ASSERT_TRUE(ReturnedValue == EPERM);
+}

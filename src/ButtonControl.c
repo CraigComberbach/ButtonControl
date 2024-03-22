@@ -255,3 +255,13 @@ ErrorCode_t Button_Reset_Object(Button_Object_t *self)
 
 	return SUCCESS;
 }
+
+ErrorCode_t Button_Current_State(Button_Object_t *self, ButtonState_t *State)
+{
+	if(self == NULL)
+	{
+		return EPERM;
+	}
+
+	return SUCCESS;
+}
