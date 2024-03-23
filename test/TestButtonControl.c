@@ -6,17 +6,17 @@
 #include "unity.h"
 
 /**********Test Wrappers**********/
-extern ButtonState_t TestWrapperButtonControl_Selves_State(Button_ObjectList_t ID);
-extern uint16_t TestWrapperButtonControl_Selves_Timer_mS(Button_ObjectList_t ID);
-extern uint16_t TestWrapperButtonControl_Selves_PressedThreshold_mS(Button_ObjectList_t ID);
-extern uint16_t TestWrapperButtonControl_Selves_LongPressedThreshold_mS(Button_ObjectList_t ID);
-extern ButtonDefaultState_t TestWrapperButtonControl_Selves_DefaultState(Button_ObjectList_t ID);
-extern bool TestWrapperButtonControl_Selves_IsInitialized(Button_ObjectList_t ID);
+extern ButtonState_t TestWrapperButtonGet_Selves_State(Button_ObjectList_t ID);
+extern uint16_t TestWrapperButtonGet_Selves_Timer_mS(Button_ObjectList_t ID);
+extern uint16_t TestWrapperButtonGet_Selves_PressedThreshold_mS(Button_ObjectList_t ID);
+extern uint16_t TestWrapperButtonGet_Selves_LongPressedThreshold_mS(Button_ObjectList_t ID);
+extern ButtonDefaultState_t TestWrapperButtonGet_Selves_DefaultState(Button_ObjectList_t ID);
+extern bool TestWrapperButtonGet_Selves_IsInitialized(Button_ObjectList_t ID);
 extern ErrorCode_t (*ReadButtonFunction)(Button_ObjectList_t ID);
-TestWrapperButtonControl_Selves_ReadButtonFunction(Button_ObjectList_t ID);
+TestWrapperButtonGet_Selves_ReadButtonFunction(Button_ObjectList_t ID);
 extern void (*NotificationFunction)(Button_ObjectList_t, ButtonState_t);
-TestWrapperButtonControl_Selves_NotificationFunction(Button_ObjectList_t ID);
-extern bool TestWrapperButtonControl_Update_State_Machine(Button_Object_t *self, uint32_t time_mS);
+TestWrapperButtonGet_Selves_NotificationFunction(Button_ObjectList_t ID);
+extern bool TestWrapperButton_Update_State_Machine(Button_Object_t *self, uint32_t time_mS);
 
 /**********Global Variables**********/
 ErrorCode_t ReturnedValue;
@@ -63,6 +63,8 @@ void tearDown(void)
 
 void test_Initialize_Button_HappyPath(void)
 {
+	TEST_ASSERT_TRUE(TestWrapperButtonGet_Selves_IsInitialized(Happy_ButtonID) == false);
+
 	ReturnedValue = Initialize_Button(Happy_ReadButtonFunction,
 									  Happy_ButtonToReference,
 									  Happy_ButtonID,
@@ -71,6 +73,7 @@ void test_Initialize_Button_HappyPath(void)
 									  Happy_NotificationFunction,
 									  NORMALLY_HIGH);
 
+	TEST_ASSERT_TRUE(TestWrapperButtonGet_Selves_IsInitialized(Happy_ButtonID) == true);
 	TEST_ASSERT_TRUE(ReturnedValue == SUCCESS);
 
 	ReturnedValue = Initialize_Button(Happy_ReadButtonFunction,
@@ -214,8 +217,29 @@ void test_Button_Aquire_Object_AlreadyOwned(void)
 
 void test_Button_Return_Object_HappyPath(void)
 {
+	TEST_ASSERT_TRUE(Initialize_Button(Happy_ReadButtonFunction,
+									   Happy_ButtonToReference,
+									   Happy_ButtonID,
+									   123,
+									   465,
+									   Happy_NotificationFunction,
+									   NORMALLY_LOW) == SUCCESS);
+	//TEST_ASSERT_EQUAL_PTR(TestWrapperButtonGet_Selves_ReadButtonFunction(Happy_ButtonID), Happy_ReadButtonFunction);
+	TEST_ASSERT_TRUE(TestWrapperButtonGet_Selves_PressedThreshold_mS(Happy_ButtonID) == 123);
+	TEST_ASSERT_TRUE(TestWrapperButtonGet_Selves_LongPressedThreshold_mS(Happy_ButtonID) == 465);
+	//TEST_ASSERT_EQUAL_PTR(TestWrapperButtonGet_Selves_NotificationFunction(Happy_ButtonID) == Happy_NotificationFunction);
+	TEST_ASSERT_TRUE(TestWrapperButtonGet_Selves_DefaultState(Happy_ButtonID) == NORMALLY_LOW);
+
 	ReturnedValue = Button_Return_Object(&ButtonObject);
 
+	TEST_ASSERT_EQUAL_PTR(TestWrapperButtonGet_Selves_ReadButtonFunction(Happy_ButtonID), NULL);
+	TEST_ASSERT_TRUE(TestWrapperButtonGet_Selves_PressedThreshold_mS(Happy_ButtonID) == 0);
+	TEST_ASSERT_TRUE(TestWrapperButtonGet_Selves_LongPressedThreshold_mS(Happy_ButtonID) == 0);
+	TEST_ASSERT_EQUAL_PTR(TestWrapperButtonGet_Selves_NotificationFunction(Happy_ButtonID), NULL);
+	TEST_ASSERT_TRUE(TestWrapperButtonGet_Selves_DefaultState(Happy_ButtonID) == NORMALLY_HIGH);
+	TEST_ASSERT_TRUE(TestWrapperButtonGet_Selves_State(Happy_ButtonID) == UNPRESSED);
+	TEST_ASSERT_TRUE(TestWrapperButtonGet_Selves_Timer_mS(Happy_ButtonID) == 0);
+	TEST_ASSERT_TRUE(TestWrapperButtonGet_Selves_IsInitialized(Happy_ButtonID) == false);
 	TEST_ASSERT_TRUE(ReturnedValue == SUCCESS);
 }
 
@@ -267,14 +291,16 @@ void test_Button_Current_State_SelfIsNull(void)
 
 void test_Update_State_Machine_NoElapsedTime(void)
 {
-	ReturnedValue = TestWrapperButtonControl_Update_State_Machine(&ButtonObject, 0);
+	ReturnedValue = TestWrapperButton_Update_State_Machine(&ButtonObject, 0);
 
 	TEST_ASSERT_TRUE(ReturnedValue == false);
 }
 
 void test_Update_State_Machine_NotEnoughElapsedTime(void)
 {
-	ReturnedValue = TestWrapperButtonControl_Update_State_Machine(&ButtonObject, Happy_ThresholdForPress_mS - 1);
+	ReturnedValue = TestWrapperButton_Update_State_Machine(&ButtonObject, Happy_ThresholdForPress_mS - 1);
 
 	TEST_ASSERT_TRUE(ReturnedValue == false);
 }
+
+//do something with the isInitialized bool in the object!
