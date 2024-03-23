@@ -83,7 +83,7 @@ void BTN_Routine(uint32_t time_mS);
 ErrorCode_t BTN_Initialize(BTN_Object_t *self,
 						   ReadButton_ptr_t readButtonFunction,
 						   Notification_ptr_t NotificationFunction,
-						   uint8_t buttonToReference,
+						   uint8_t ButtonToReference,
 						   uint16_t thresholdForPress_mS,
 						   uint16_t thresholdForLongPress_mS,
 						   ButtonDefaultState_t DefaultState);

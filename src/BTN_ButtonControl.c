@@ -31,6 +31,7 @@ static struct Button_Object
 {
 	ReadButton_ptr_t ReadButtonFunction;
 	Notification_ptr_t NotificationFunction;
+	uint8_t ButtonToReference;
 	ButtonState_t State;
 	uint32_t Timer_mS;
 	uint16_t PressedThreshold_mS;
@@ -195,7 +196,7 @@ static void Update_State_Machine(BTN_Object_t *self, uint32_t time_mS)
 ErrorCode_t BTN_Initialize(BTN_Object_t *self,
 						   ReadButton_ptr_t readButtonFunction,
 						   Notification_ptr_t NotificationFunction,
-						   uint8_t buttonToReference,
+						   uint8_t ButtonToReference,
 						   uint16_t thresholdForPress_mS,
 						   uint16_t thresholdForLongPress_mS,
 						   ButtonDefaultState_t DefaultState)
@@ -217,6 +218,7 @@ ErrorCode_t BTN_Initialize(BTN_Object_t *self,
 		return EINVAL;
 	}
 
+	self->ButtonToReference = ButtonToReference;
 	self->ReadButtonFunction = readButtonFunction;
 	self->State = UNPRESSED;
 	self->Timer_mS = ZEROED;
