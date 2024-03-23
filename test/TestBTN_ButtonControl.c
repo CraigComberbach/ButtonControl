@@ -12,10 +12,8 @@ extern uint16_t TestGetBTN_Selves_PressedThreshold_mS(BTN_ObjectList_t ID);
 extern uint16_t TestGetBTN_Selves_LongPressedThreshold_mS(BTN_ObjectList_t ID);
 extern ButtonDefaultState_t TestGetBTN_Selves_DefaultState(BTN_ObjectList_t ID);
 extern bool TestGetBTN_Selves_IsInitialized(BTN_ObjectList_t ID);
-extern ErrorCode_t (*ReadButtonFunction)(BTN_ObjectList_t ID);
-TestGetBTN_Selves_ReadButtonFunction(BTN_ObjectList_t ID);
-extern void (*NotificationFunction)(BTN_ObjectList_t, ButtonState_t);
-TestGetBTN_Selves_NotificationFunction(BTN_ObjectList_t ID);
+extern ReadButton_ptr_t TestGetBTN_Selves_ReadButtonFunction(BTN_ObjectList_t ID);
+extern Notification_ptr_t TestGetBTN_Selves_NotificationFunction(BTN_ObjectList_t ID);
 
 extern void TestSetBTN_Selves_ReadButtonFunction(BTN_ObjectList_t ID, ErrorCode_t (*NewValue)(BTN_ObjectList_t ID));
 extern void TestSetBTN_Selves_NotificationFunction(BTN_ObjectList_t ID, void (*NewValue)(BTN_ObjectList_t, ButtonState_t));
@@ -63,12 +61,12 @@ void setUp(void)
 	Happy_DefaultState = NORMALLY_HIGH;
 
 	BTN_Aquire_Object(&ButtonObject, Happy_ButtonID);
-	BTN_Initialize(Happy_ReadButtonFunction,
+	BTN_Initialize(ButtonObject,
+				   Happy_ReadButtonFunction,
+				   Happy_NotificationFunction,
 				   Happy_ButtonToReference,
-				   Happy_ButtonID,
 				   Happy_ThresholdForPress_mS,
 				   Happy_ThresholdForLongPress_mS,
-				   Happy_NotificationFunction,
 				   Happy_DefaultState);
 }
 
@@ -77,41 +75,60 @@ void tearDown(void)
 	BTN_Return_Object(&ButtonObject);
 }
 
-void test_Initialize_Button_HappyPath(void)
+void test_Initialize_Button_HappyPathNormallyHigh(void)
 {
 	BTN_Reset_Object(ButtonObject);
 	TEST_ASSERT_TRUE(TestGetBTN_Selves_IsInitialized(Happy_ButtonID) == false);
 
-	ReturnedValue = BTN_Initialize(Happy_ReadButtonFunction,
+	ReturnedValue = BTN_Initialize(ButtonObject,
+								   Happy_ReadButtonFunction,
+								   Happy_NotificationFunction,
 								   Happy_ButtonToReference,
-								   Happy_ButtonID,
 								   Happy_ThresholdForPress_mS,
 								   Happy_ThresholdForLongPress_mS,
-								   Happy_NotificationFunction,
 								   NORMALLY_HIGH);
 
 	TEST_ASSERT_TRUE(TestGetBTN_Selves_IsInitialized(Happy_ButtonID) == true);
 	TEST_ASSERT_TRUE(ReturnedValue == SUCCESS);
+}
 
-	ReturnedValue = BTN_Initialize(Happy_ReadButtonFunction,
+void test_Initialize_Button_HappyPathNormallyLow(void)
+{
+	BTN_Reset_Object(ButtonObject);
+	TEST_ASSERT_TRUE(TestGetBTN_Selves_IsInitialized(Happy_ButtonID) == false);
+
+	ReturnedValue = BTN_Initialize(ButtonObject,
+								   Happy_ReadButtonFunction,
+								   Happy_NotificationFunction,
 								   Happy_ButtonToReference,
-								   Happy_ButtonID,
 								   Happy_ThresholdForPress_mS,
 								   Happy_ThresholdForLongPress_mS,
-								   Happy_NotificationFunction,
 								   NORMALLY_LOW);
 
 	TEST_ASSERT_TRUE(ReturnedValue == SUCCESS);
 }
 
-void test_Initialize_Button_ReadButtonIsNull(void)
+void test_Initialize_Button_ObjectIsNull(void)
 {
 	ReturnedValue = BTN_Initialize(NULL,
+								   Happy_ReadButtonFunction,
+								   Happy_NotificationFunction,
 								   Happy_ButtonToReference,
-								   Happy_ButtonID,
 								   Happy_ThresholdForPress_mS,
 								   Happy_ThresholdForLongPress_mS,
+								   Happy_DefaultState);
+
+	TEST_ASSERT_TRUE(ReturnedValue == EINVAL);
+}
+
+void test_Initialize_Button_ReadButtonIsNull(void)
+{
+	ReturnedValue = BTN_Initialize(ButtonObject,
+								   NULL,
 								   Happy_NotificationFunction,
+								   Happy_ButtonToReference,
+								   Happy_ThresholdForPress_mS,
+								   Happy_ThresholdForLongPress_mS,
 								   Happy_DefaultState);
 
 	TEST_ASSERT_TRUE(ReturnedValue == EINVAL);
@@ -119,51 +136,25 @@ void test_Initialize_Button_ReadButtonIsNull(void)
 
 void test_Initialize_Button_NotificationIsNull(void)
 {
-	ReturnedValue = BTN_Initialize(Happy_ReadButtonFunction,
+	ReturnedValue = BTN_Initialize(ButtonObject,
+								   Happy_ReadButtonFunction,
+								   NULL,
 								   Happy_ButtonToReference,
-								   Happy_ButtonID,
 								   Happy_ThresholdForPress_mS,
 								   Happy_ThresholdForLongPress_mS,
-								   NULL,
 								   Happy_DefaultState);
 
 	TEST_ASSERT_TRUE(ReturnedValue == SUCCESS);
 }
 
-void test_Initialize_Button_InvalidButtonID_Low(void)
-{
-	ReturnedValue = BTN_Initialize(Happy_ReadButtonFunction,
-								   Happy_ButtonToReference,
-								   -1,
-								   Happy_ThresholdForPress_mS,
-								   Happy_ThresholdForLongPress_mS,
-								   Happy_NotificationFunction,
-								   Happy_DefaultState);
-
-	TEST_ASSERT_TRUE(ReturnedValue == ERANGE);
-}
-
-void test_Initialize_Button_InvalidButtonID_High(void)
-{
-	ReturnedValue = BTN_Initialize(Happy_ReadButtonFunction,
-								   Happy_ButtonToReference,
-								   NUMBER_OF_BUTTON_OBJECTS,
-								   Happy_ThresholdForPress_mS,
-								   Happy_ThresholdForLongPress_mS,
-								   Happy_NotificationFunction,
-								   Happy_DefaultState);
-
-	TEST_ASSERT_TRUE(ReturnedValue == ERANGE);
-}
-
 void test_Initialize_Button_InvalidDefaultState(void)
 {
-	ReturnedValue = BTN_Initialize(Happy_ReadButtonFunction,
+	ReturnedValue = BTN_Initialize(ButtonObject,
+								   Happy_ReadButtonFunction,
+								   Happy_NotificationFunction,
 								   Happy_ButtonToReference,
-								   Happy_ButtonID,
 								   Happy_ThresholdForPress_mS,
 								   Happy_ThresholdForLongPress_mS,
-								   Happy_NotificationFunction,
 								   3);
 
 	TEST_ASSERT_TRUE(ReturnedValue == ERANGE);
@@ -171,12 +162,12 @@ void test_Initialize_Button_InvalidDefaultState(void)
 
 void test_Initialize_Button_LongpressThresholdIsGreaterThanPressThreshold(void)
 {
-	ReturnedValue = BTN_Initialize(Happy_ReadButtonFunction,
-								   Happy_ButtonToReference,
-								   Happy_ButtonID,
-								   5,
-								   5,
+	ReturnedValue = BTN_Initialize(ButtonObject,
+								   Happy_ReadButtonFunction,
 								   Happy_NotificationFunction,
+								   Happy_ButtonToReference,
+								   5,
+								   5,
 								   Happy_DefaultState);
 
 	TEST_ASSERT_TRUE(ReturnedValue == EINVAL);
@@ -234,12 +225,12 @@ void test_Button_Aquire_Object_AlreadyOwned(void)
 
 void test_Button_Return_Object_HappyPath(void)
 {
-	TEST_ASSERT_TRUE(BTN_Initialize(Happy_ReadButtonFunction,
+	TEST_ASSERT_TRUE(BTN_Initialize(ButtonObject,
+									Happy_ReadButtonFunction,
+									Happy_NotificationFunction,
 									Happy_ButtonToReference,
-									Happy_ButtonID,
 									123,
 									465,
-									Happy_NotificationFunction,
 									NORMALLY_LOW) == SUCCESS);
 	//TEST_ASSERT_EQUAL_PTR(TestGetBTN_Selves_ReadButtonFunction(Happy_ButtonID), Happy_ReadButtonFunction);
 	TEST_ASSERT_TRUE(TestGetBTN_Selves_PressedThreshold_mS(Happy_ButtonID) == 123);

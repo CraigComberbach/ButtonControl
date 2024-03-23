@@ -24,9 +24,6 @@
 
 /************Enumerations*************/
 /**********Type Definitions***********/
-typedef ErrorCode_t (*ReadButton_ptr_t)(BTN_ObjectList_t ID);
-typedef void (*Notification_ptr_t)(BTN_ObjectList_t, ButtonState_t);
-
 /*************Structures**************/
 /**********Global Variables***********/
 /*********Object Definition***********/
@@ -186,21 +183,21 @@ static bool Update_State_Machine(BTN_Object_t *self, uint32_t time_mS)
 //	return;
 //}
 
-ErrorCode_t BTN_Initialize(ErrorCode_t (*readButtonFunction)(BTN_ObjectList_t),
+ErrorCode_t BTN_Initialize(BTN_Object_t *self,
+						   ReadButton_ptr_t readButtonFunction,
+						   Notification_ptr_t NotificationFunction,
 						   uint8_t buttonToReference,
-						   BTN_ObjectList_t ButtonID,
 						   uint16_t thresholdForPress_mS,
 						   uint16_t thresholdForLongPress_mS,
-						   void (*NotificationFunction)(BTN_ObjectList_t, ButtonState_t),
 						   ButtonDefaultState_t DefaultState)
 {
-	if(readButtonFunction == NULL)
+	if(self == NULL)
 	{
 		return EINVAL;
 	}
-	if((ButtonID < 0) || (ButtonID >= NUMBER_OF_BUTTON_OBJECTS))
+	if(readButtonFunction == NULL)
 	{
-		return ERANGE;
+		return EINVAL;
 	}
 	if((DefaultState != NORMALLY_HIGH) && (DefaultState != NORMALLY_LOW))
 	{
@@ -211,14 +208,14 @@ ErrorCode_t BTN_Initialize(ErrorCode_t (*readButtonFunction)(BTN_ObjectList_t),
 		return EINVAL;
 	}
 
-	selves[ButtonID].ReadButtonFunction = readButtonFunction;
-	selves[ButtonID].State = UNPRESSED;
-	selves[ButtonID].Timer_mS = ZEROED;
-	selves[ButtonID].PressedThreshold_mS = thresholdForPress_mS;
-	selves[ButtonID].LongPressedThreshold_mS = thresholdForLongPress_mS;
-	selves[ButtonID].NotificationFunction = NotificationFunction;
-	selves[ButtonID].DefaultState = DefaultState;
-	selves[ButtonID].IsInitialized = true;
+	self->ReadButtonFunction = readButtonFunction;
+	self->State = UNPRESSED;
+	self->Timer_mS = ZEROED;
+	self->PressedThreshold_mS = thresholdForPress_mS;
+	self->LongPressedThreshold_mS = thresholdForLongPress_mS;
+	self->NotificationFunction = NotificationFunction;
+	self->DefaultState = DefaultState;
+	self->IsInitialized = true;
 
 	return 0;
 }
@@ -290,10 +287,8 @@ uint16_t TestGetBTN_Selves_PressedThreshold_mS(BTN_ObjectList_t ID);
 uint16_t TestGetBTN_Selves_LongPressedThreshold_mS(BTN_ObjectList_t ID);
 ButtonDefaultState_t TestGetBTN_Selves_DefaultState(BTN_ObjectList_t ID);
 bool TestGetBTN_Selves_IsInitialized(BTN_ObjectList_t ID);
-ErrorCode_t (*ReadButtonFunction)(BTN_ObjectList_t ID);
-TestGetBTN_Selves_ReadButtonFunction(BTN_ObjectList_t ID);
-void (*NotificationFunction)(BTN_ObjectList_t, ButtonState_t);
-TestGetBTN_Selves_NotificationFunction(BTN_ObjectList_t ID);
+ReadButton_ptr_t TestGetBTN_Selves_ReadButtonFunction(BTN_ObjectList_t ID);
+Notification_ptr_t TestGetBTN_Selves_NotificationFunction(BTN_ObjectList_t ID);
 void TestSetBTN_Selves_ReadButtonFunction(BTN_ObjectList_t ID, ErrorCode_t (*NewValue)(BTN_ObjectList_t ID));
 void TestSetBTN_Selves_NotificationFunction(BTN_ObjectList_t ID, void (*NewValue)(BTN_ObjectList_t, ButtonState_t));
 void TestSetBTN_Selves_State(BTN_ObjectList_t ID, ButtonState_t NewValue);
@@ -333,25 +328,23 @@ bool TestGetBTN_Selves_IsInitialized(BTN_ObjectList_t ID)
 	return selves[ID].IsInitialized;
 }
 
-ErrorCode_t (*ReadButtonFunction)(BTN_ObjectList_t ID);
-TestGetBTN_Selves_ReadButtonFunction(BTN_ObjectList_t ID)
+ReadButton_ptr_t TestGetBTN_Selves_ReadButtonFunction(BTN_ObjectList_t ID)
 {
 	return selves[ID].ReadButtonFunction;
 }
 
-void (*NotificationFunction)(BTN_ObjectList_t, ButtonState_t);
-TestGetBTN_Selves_NotificationFunction(BTN_ObjectList_t ID)
+Notification_ptr_t TestGetBTN_Selves_NotificationFunction(BTN_ObjectList_t ID)
 {
 	return selves[ID].NotificationFunction;
 }
 
-void TestSetBTN_Selves_ReadButtonFunction(BTN_ObjectList_t ID, ErrorCode_t (*NewValue)(BTN_ObjectList_t ID))
+void TestSetBTN_Selves_ReadButtonFunction(BTN_ObjectList_t ID, ReadButton_ptr_t NewValue)
 {
 	selves[ID].ReadButtonFunction = NewValue;
 	return;
 }
 
-void TestSetBTN_Selves_NotificationFunction(BTN_ObjectList_t ID, void (*NewValue)(BTN_ObjectList_t, ButtonState_t))
+void TestSetBTN_Selves_NotificationFunction(BTN_ObjectList_t ID, Notification_ptr_t NewValue)
 {
 	selves[ID].NotificationFunction = NewValue;
 	return;

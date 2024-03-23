@@ -48,6 +48,10 @@ typedef enum
 	RELEASED
 } ButtonState_t;
 
+/**********Type Definitions***********/
+typedef ErrorCode_t (*ReadButton_ptr_t)(BTN_ObjectList_t ID);
+typedef void (*Notification_ptr_t)(BTN_ObjectList_t, ButtonState_t);
+
 /*********Object Definition***********/
 typedef struct Button_Object BTN_Object_t;
 
@@ -76,12 +80,12 @@ void BTN_Routine(uint32_t time_mS);
  * @param NotificationFunction A pointer to a function to be called when a buttons state changes
  * @param defaultState The resting level of a button
  */
-ErrorCode_t BTN_Initialize(ErrorCode_t (*readButtonFunction)(BTN_ObjectList_t),
+ErrorCode_t BTN_Initialize(BTN_Object_t *self,
+						   ReadButton_ptr_t readButtonFunction,
+						   Notification_ptr_t NotificationFunction,
 						   uint8_t buttonToReference,
-						   BTN_ObjectList_t ButtonID,
 						   uint16_t thresholdForPress_mS,
 						   uint16_t thresholdForLongPress_mS,
-						   void (*NotificationFunction)(BTN_ObjectList_t, ButtonState_t),
 						   ButtonDefaultState_t DefaultState);
 
 #endif//BTN_BUTTON_CONTROL_H
