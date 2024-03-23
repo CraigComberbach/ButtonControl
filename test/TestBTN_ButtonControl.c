@@ -63,6 +63,13 @@ void setUp(void)
 	Happy_DefaultState = NORMALLY_HIGH;
 
 	BTN_Aquire_Object(&ButtonObject, Happy_ButtonID);
+	BTN_Initialize(Happy_ReadButtonFunction,
+				   Happy_ButtonToReference,
+				   Happy_ButtonID,
+				   Happy_ThresholdForPress_mS,
+				   Happy_ThresholdForLongPress_mS,
+				   Happy_NotificationFunction,
+				   Happy_DefaultState);
 }
 
 void tearDown(void)
@@ -72,6 +79,7 @@ void tearDown(void)
 
 void test_Initialize_Button_HappyPath(void)
 {
+	BTN_Reset_Object(ButtonObject);
 	TEST_ASSERT_TRUE(TestGetBTN_Selves_IsInitialized(Happy_ButtonID) == false);
 
 	ReturnedValue = BTN_Initialize(Happy_ReadButtonFunction,
