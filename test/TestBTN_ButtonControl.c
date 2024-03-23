@@ -23,7 +23,8 @@ extern void TestSetBTN_Selves_PressedThreshold_mS(BTN_ObjectList_t ID, uint16_t 
 extern void TestSetBTN_Selves_LongPressedThreshold_mS(BTN_ObjectList_t ID, uint16_t NewValue);
 extern void TestSetBTN_Selves_DefaultState(BTN_ObjectList_t ID, ButtonDefaultState_t NewValue);
 
-extern bool TestWrapperBTN_Update_State_Machine(BTN_Object_t *self, uint32_t time_mS);
+extern void TestWrapperBTN_Update_State_Machine(BTN_Object_t *self, uint32_t time_mS);
+extern void TestWrapperBTN_Transition_Away_From_Unpressed(BTN_Object_t *self, uint32_t time_ms);
 
 /**********Global Variables**********/
 ErrorCode_t ReturnedValue;
@@ -55,7 +56,7 @@ void setUp(void)
 	Happy_ReadButtonFunction = &Fake_ReadButtonFunction;
 	Happy_NotificationFunction = &Fake_NotificationFunction;
 	Happy_ButtonToReference = 3;
-	BTN_ObjectList_t Happy_ButtonID = BUTTON_TEST1;
+	BTN_ObjectList_t Happy_ButtonID = BTN_AUTOMATICALLY_INITIALIZED;
 	Happy_ThresholdForPress_mS = 5;
 	Happy_ThresholdForLongPress_mS = 7;
 	Happy_DefaultState = NORMALLY_HIGH;
@@ -299,14 +300,21 @@ void test_Button_Current_State_SelfIsNull(void)
 
 void test_Update_State_Machine_NoElapsedTime(void)
 {
-	ReturnedValue = TestWrapperBTN_Update_State_Machine(&ButtonObject, 0);
+	TestWrapperBTN_Update_State_Machine(&ButtonObject, 0);
 
 	TEST_ASSERT_TRUE(ReturnedValue == false);
 }
 
 void test_Update_State_Machine_NotEnoughElapsedTime(void)
 {
-	ReturnedValue = TestWrapperBTN_Update_State_Machine(&ButtonObject, Happy_ThresholdForPress_mS - 1);
+	TestWrapperBTN_Update_State_Machine(&ButtonObject, Happy_ThresholdForPress_mS - 1);
 
-	TEST_ASSERT_TRUE(ReturnedValue == false);
+	TEST_ASSERT_TRUE(TestGetBTN_Selves_State(BTN_AUTOMATICALLY_INITIALIZED) == UNPRESSED);
+}
+
+void test_Transition_Away_From_Unpressed_NotEnoughElapsedTime(void)
+{
+	TestWrapperBTN_Transition_Away_From_Unpressed(&ButtonObject, Happy_ThresholdForPress_mS - 1);
+
+	TEST_ASSERT_TRUE(TestGetBTN_Selves_State(BTN_AUTOMATICALLY_INITIALIZED) == UNPRESSED);
 }
