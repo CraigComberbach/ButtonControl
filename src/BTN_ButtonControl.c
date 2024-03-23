@@ -1,9 +1,10 @@
 /******************************************************************************
  * Version History:
- * v2.0.1	2024-03-20	Craig Comberbach
+ * v2.1.0	2024-03-23	Craig Comberbach
  * 	+Added Ceedling tests (using ceedling 0.32.0-9b8d8a9 pre-release and GCC 13.2.0)
  * 	+Using standard libraries instead of custom declarations (NULL vs NULL_POINTER definition)
  *	+Header file is compliant with self compilation if required
+ *	Refactored to operate as an obscured object
  * v2.0.0	2015-12-21	Craig Comberbach
  * 	Compiler: C30 v3.31	IDE: MPLABx 3.05	Tool: ICD3	Computer: Intel Core2 Quad CPU 2.40 GHz, 5 GB RAM, Windows 10 64 bit Home
  * 	+Made a generic interface using function pointer so that any snippet of code can make use of this code
@@ -13,7 +14,7 @@
  *	First version
  ******************************************************************************/
 /************Header Files*************/
-#include "ButtonControl.h"
+#include "BTN_ButtonControl.h"
 #include <errno.h>
 #include <stdbool.h>
 
@@ -23,8 +24,8 @@
 
 /************Enumerations*************/
 /**********Type Definitions***********/
-typedef ErrorCode_t (*ReadButton_ptr_t)(Button_ObjectList_t ID);
-typedef void (*Notification_ptr_t)(Button_ObjectList_t, ButtonState_t);
+typedef ErrorCode_t (*ReadButton_ptr_t)(BTN_ObjectList_t ID);
+typedef void (*Notification_ptr_t)(BTN_ObjectList_t, ButtonState_t);
 
 /*************Structures**************/
 /**********Global Variables***********/
@@ -55,12 +56,12 @@ static struct Button_Object
 };
 
 /*****Local Function Prototypes*******/
-static bool Update_State_Machine(Button_Object_t *self, uint32_t time_mS);
+static bool Update_State_Machine(BTN_Object_t *self, uint32_t time_mS);
 
 /*********Main Body Of Code***********/
-void Buttons_Routine(uint32_t time_mS)
+void BTN_Routine(uint32_t time_mS)
 {
-	Button_ObjectList_t currentButton;
+	BTN_ObjectList_t currentButton;
 	bool StateMachineUpdated;
 
 	for(currentButton = 0; currentButton < NUMBER_OF_BUTTON_OBJECTS; currentButton++)
@@ -75,7 +76,7 @@ void Buttons_Routine(uint32_t time_mS)
 	return;
 }
 
-static bool Update_State_Machine(Button_Object_t *self, uint32_t time_mS)
+static bool Update_State_Machine(BTN_Object_t *self, uint32_t time_mS)
 {
 	bool StateMachineChanged = false;
 	switch(self->State)
@@ -97,7 +98,7 @@ static bool Update_State_Machine(Button_Object_t *self, uint32_t time_mS)
 
 //void Buttons_Routine_Deprecated(uint32_t time_mS)
 //{
-//	Button_ObjectList_t currentButton;
+//	BTN_ObjectList_t currentButton;
 
 //	//Update all buttons
 //	for(currentButton = 0; currentButton < NUMBER_OF_BUTTON_OBJECTS; currentButton++)
@@ -185,13 +186,13 @@ static bool Update_State_Machine(Button_Object_t *self, uint32_t time_mS)
 //	return;
 //}
 
-ErrorCode_t Initialize_Button(ErrorCode_t (*readButtonFunction)(Button_ObjectList_t),
-							  uint8_t buttonToReference,
-							  Button_ObjectList_t ButtonID,
-							  uint16_t thresholdForPress_mS,
-							  uint16_t thresholdForLongPress_mS,
-							  void (*NotificationFunction)(Button_ObjectList_t, ButtonState_t),
-							  ButtonDefaultState_t DefaultState)
+ErrorCode_t BTN_Initialize(ErrorCode_t (*readButtonFunction)(BTN_ObjectList_t),
+						   uint8_t buttonToReference,
+						   BTN_ObjectList_t ButtonID,
+						   uint16_t thresholdForPress_mS,
+						   uint16_t thresholdForLongPress_mS,
+						   void (*NotificationFunction)(BTN_ObjectList_t, ButtonState_t),
+						   ButtonDefaultState_t DefaultState)
 {
 	if(readButtonFunction == NULL)
 	{
@@ -222,7 +223,7 @@ ErrorCode_t Initialize_Button(ErrorCode_t (*readButtonFunction)(Button_ObjectLis
 	return 0;
 }
 
-ErrorCode_t Button_Aquire_Object(Button_Object_t **self, Button_ObjectList_t ObjectID)
+ErrorCode_t BTN_Aquire_Object(BTN_Object_t **self, BTN_ObjectList_t ObjectID)
 {
 	if((ObjectID < 0) || (ObjectID >= NUMBER_OF_BUTTON_OBJECTS))
 	{
@@ -238,20 +239,20 @@ ErrorCode_t Button_Aquire_Object(Button_Object_t **self, Button_ObjectList_t Obj
 	return SUCCESS;
 }
 
-ErrorCode_t Button_Return_Object(Button_Object_t **self)
+ErrorCode_t BTN_Return_Object(BTN_Object_t **self)
 {
 	if(*self == NULL)
 	{
 		return EPERM;
 	}
 
-	Button_Reset_Object(*self);
+	BTN_Reset_Object(*self);
 	*self = NULL;
 
 	return SUCCESS;
 }
 
-ErrorCode_t Button_Reset_Object(Button_Object_t *self)
+ErrorCode_t BTN_Reset_Object(BTN_Object_t *self)
 {
 	if(self == NULL)
 	{
@@ -270,7 +271,7 @@ ErrorCode_t Button_Reset_Object(Button_Object_t *self)
 	return SUCCESS;
 }
 
-ErrorCode_t Button_Current_State(Button_Object_t *self, ButtonState_t *State)
+ErrorCode_t BTN_Current_State(BTN_Object_t *self, ButtonState_t *State)
 {
 	if(self == NULL)
 	{
@@ -283,61 +284,61 @@ ErrorCode_t Button_Current_State(Button_Object_t *self, ButtonState_t *State)
 }
 
 #ifdef ENABLE_BUTTON_CONTROL_TEST_WRAPPERS
-ButtonState_t TestWrapperButtonGet_Selves_State(Button_ObjectList_t ID);
-uint16_t TestWrapperButtonGet_Selves_Timer_mS(Button_ObjectList_t ID);
-uint16_t TestWrapperButtonGet_Selves_PressedThreshold_mS(Button_ObjectList_t ID);
-uint16_t TestWrapperButtonGet_Selves_LongPressedThreshold_mS(Button_ObjectList_t ID);
-ButtonDefaultState_t TestWrapperButtonGet_Selves_DefaultState(Button_ObjectList_t ID);
-bool TestWrapperButtonGet_Selves_IsInitialized(Button_ObjectList_t ID);
-ErrorCode_t (*ReadButtonFunction)(Button_ObjectList_t ID);
-TestWrapperButtonGet_Selves_ReadButtonFunction(Button_ObjectList_t ID);
-void (*NotificationFunction)(Button_ObjectList_t, ButtonState_t);
-TestWrapperButtonGet_Selves_NotificationFunction(Button_ObjectList_t ID);
-bool TestWrapperButton_Update_State_Machine(Button_Object_t *self, uint32_t time_mS);
+ButtonState_t TestGetBTN_Selves_State(BTN_ObjectList_t ID);
+uint16_t TestGetBTN_Selves_Timer_mS(BTN_ObjectList_t ID);
+uint16_t TestGetBTN_Selves_PressedThreshold_mS(BTN_ObjectList_t ID);
+uint16_t TestGetBTN_Selves_LongPressedThreshold_mS(BTN_ObjectList_t ID);
+ButtonDefaultState_t TestGetBTN_Selves_DefaultState(BTN_ObjectList_t ID);
+bool TestGetBTN_Selves_IsInitialized(BTN_ObjectList_t ID);
+ErrorCode_t (*ReadButtonFunction)(BTN_ObjectList_t ID);
+TestGetBTN_Selves_ReadButtonFunction(BTN_ObjectList_t ID);
+void (*NotificationFunction)(BTN_ObjectList_t, ButtonState_t);
+TestGetBTN_Selves_NotificationFunction(BTN_ObjectList_t ID);
+bool TestWrapperBTN_Update_State_Machine(BTN_Object_t *self, uint32_t time_mS);
 
-ButtonState_t TestWrapperButtonGet_Selves_State(Button_ObjectList_t ID)
+ButtonState_t TestGetBTN_Selves_State(BTN_ObjectList_t ID)
 {
 	return selves[ID].State;
 }
 
-uint16_t TestWrapperButtonGet_Selves_Timer_mS(Button_ObjectList_t ID)
+uint16_t TestGetBTN_Selves_Timer_mS(BTN_ObjectList_t ID)
 {
 	return selves[ID].Timer_mS;
 }
 
-uint16_t TestWrapperButtonGet_Selves_PressedThreshold_mS(Button_ObjectList_t ID)
+uint16_t TestGetBTN_Selves_PressedThreshold_mS(BTN_ObjectList_t ID)
 {
 	return selves[ID].PressedThreshold_mS;
 }
 
-uint16_t TestWrapperButtonGet_Selves_LongPressedThreshold_mS(Button_ObjectList_t ID)
+uint16_t TestGetBTN_Selves_LongPressedThreshold_mS(BTN_ObjectList_t ID)
 {
 	return selves[ID].LongPressedThreshold_mS;
 }
 
-ButtonDefaultState_t TestWrapperButtonGet_Selves_DefaultState(Button_ObjectList_t ID)
+ButtonDefaultState_t TestGetBTN_Selves_DefaultState(BTN_ObjectList_t ID)
 {
 	return selves[ID].DefaultState;
 }
 
-bool TestWrapperButtonGet_Selves_IsInitialized(Button_ObjectList_t ID)
+bool TestGetBTN_Selves_IsInitialized(BTN_ObjectList_t ID)
 {
 	return selves[ID].IsInitialized;
 }
 
-ErrorCode_t (*ReadButtonFunction)(Button_ObjectList_t ID);
-TestWrapperButtonGet_Selves_ReadButtonFunction(Button_ObjectList_t ID)
+ErrorCode_t (*ReadButtonFunction)(BTN_ObjectList_t ID);
+TestGetBTN_Selves_ReadButtonFunction(BTN_ObjectList_t ID)
 {
 	return selves[ID].ReadButtonFunction;
 }
 
-void (*NotificationFunction)(Button_ObjectList_t, ButtonState_t);
-TestWrapperButtonGet_Selves_NotificationFunction(Button_ObjectList_t ID)
+void (*NotificationFunction)(BTN_ObjectList_t, ButtonState_t);
+TestGetBTN_Selves_NotificationFunction(BTN_ObjectList_t ID)
 {
 	return selves[ID].NotificationFunction;
 }
 
-bool TestWrapperButton_Update_State_Machine(Button_Object_t *self, uint32_t time_mS)
+bool TestWrapperBTN_Update_State_Machine(BTN_Object_t *self, uint32_t time_mS)
 {
 	return Update_State_Machine(self, time_mS);
 }

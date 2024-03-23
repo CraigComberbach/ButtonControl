@@ -1,5 +1,5 @@
-#ifndef BUTTON_CONTROL_H
-#define BUTTON_CONTROL_H
+#ifndef BTN_BUTTON_CONTROL_H
+#define BTN_BUTTON_CONTROL_H
 /**********Include Headers************/
 #include <stddef.h>
 #include <stdint.h>
@@ -9,15 +9,15 @@
 /*
 	//Buttons Debounce Library
 	#define BUTTON_CONTROL_MAJOR	2
-	#define BUTTON_CONTROL_MINOR	0
-	#define BUTTON_CONTROL_PATCH	1
+	#define BUTTON_CONTROL_MINOR	1
+	#define BUTTON_CONTROL_PATCH	0
 
 //Buttons
-enum ButtonObjects_t
+typedef enum
 {
 	BUTTON_,
 	NUMBER_OF_BUTTON_OBJECTS
-};
+} BTN_ObjectList_t;
 */
 
 /**********Add to config.c************/
@@ -49,20 +49,20 @@ typedef enum
 } ButtonState_t;
 
 /*********Object Definition***********/
-typedef struct Button_Object Button_Object_t;
+typedef struct Button_Object BTN_Object_t;
 
 /****Module Function Prototypes*******/
-ErrorCode_t Button_Aquire_Object(Button_Object_t **self, Button_ObjectList_t ObjectID);
-ErrorCode_t Button_Return_Object(Button_Object_t **self);
-ErrorCode_t Button_Reset_Object(Button_Object_t *self);
+ErrorCode_t BTN_Aquire_Object(BTN_Object_t **self, BTN_ObjectList_t ObjectID);
+ErrorCode_t BTN_Return_Object(BTN_Object_t **self);
+ErrorCode_t BTN_Reset_Object(BTN_Object_t *self);
 
-ErrorCode_t Button_Current_State(Button_Object_t *self, ButtonState_t *State);
+ErrorCode_t BTN_Current_State(BTN_Object_t *self, ButtonState_t *State);
 
 /**
  * Periodically called, takes care of the debouncing, state changes, and events that occur at a state change
  * @param time_mS How many mS have lapsed since the last time this function was called
  */
-void Buttons_Routine(uint32_t time_mS);
+void BTN_Routine(uint32_t time_mS);
 //void Buttons_Routine_Deprecated(uint32_t time_mS);
 
 /**
@@ -76,12 +76,12 @@ void Buttons_Routine(uint32_t time_mS);
  * @param NotificationFunction A pointer to a function to be called when a buttons state changes
  * @param defaultState The resting level of a button
  */
-ErrorCode_t Initialize_Button(ErrorCode_t (*readButtonFunction)(Button_ObjectList_t),
-							  uint8_t buttonToReference,
-							  Button_ObjectList_t ButtonID,
-							  uint16_t thresholdForPress_mS,
-							  uint16_t thresholdForLongPress_mS,
-							  void (*NotificationFunction)(Button_ObjectList_t, ButtonState_t),
-							  ButtonDefaultState_t DefaultState);
+ErrorCode_t BTN_Initialize(ErrorCode_t (*readButtonFunction)(BTN_ObjectList_t),
+						   uint8_t buttonToReference,
+						   BTN_ObjectList_t ButtonID,
+						   uint16_t thresholdForPress_mS,
+						   uint16_t thresholdForLongPress_mS,
+						   void (*NotificationFunction)(BTN_ObjectList_t, ButtonState_t),
+						   ButtonDefaultState_t DefaultState);
 
-#endif
+#endif//BTN_BUTTON_CONTROL_H

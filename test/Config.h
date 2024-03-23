@@ -16,7 +16,7 @@ typedef enum
 	BUTTON_TEST1,
 	BUTTON_TEST2,
 	NUMBER_OF_BUTTON_OBJECTS
-} Button_ObjectList_t;
+} BTN_ObjectList_t;
 
 typedef int_fast8_t ErrorCode_t;
 #define SUCCESS 0
