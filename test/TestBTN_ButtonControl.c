@@ -16,6 +16,15 @@ extern ErrorCode_t (*ReadButtonFunction)(BTN_ObjectList_t ID);
 TestGetBTN_Selves_ReadButtonFunction(BTN_ObjectList_t ID);
 extern void (*NotificationFunction)(BTN_ObjectList_t, ButtonState_t);
 TestGetBTN_Selves_NotificationFunction(BTN_ObjectList_t ID);
+
+extern void TestSetBTN_Selves_ReadButtonFunction(BTN_ObjectList_t ID, ErrorCode_t (*NewValue)(BTN_ObjectList_t ID));
+extern void TestSetBTN_Selves_NotificationFunction(BTN_ObjectList_t ID, void (*NewValue)(BTN_ObjectList_t, ButtonState_t));
+extern void TestSetBTN_Selves_State(BTN_ObjectList_t ID, ButtonState_t NewValue);
+extern void TestSetBTN_Selves_Timer_mS(BTN_ObjectList_t ID, uint32_t NewValue);
+extern void TestSetBTN_Selves_PressedThreshold_mS(BTN_ObjectList_t ID, uint16_t NewValue);
+extern void TestSetBTN_Selves_LongPressedThreshold_mS(BTN_ObjectList_t ID, uint16_t NewValue);
+extern void TestSetBTN_Selves_DefaultState(BTN_ObjectList_t ID, ButtonDefaultState_t NewValue);
+
 extern bool TestWrapperBTN_Update_State_Machine(BTN_Object_t *self, uint32_t time_mS);
 
 /**********Global Variables**********/

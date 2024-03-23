@@ -294,6 +294,13 @@ ErrorCode_t (*ReadButtonFunction)(BTN_ObjectList_t ID);
 TestGetBTN_Selves_ReadButtonFunction(BTN_ObjectList_t ID);
 void (*NotificationFunction)(BTN_ObjectList_t, ButtonState_t);
 TestGetBTN_Selves_NotificationFunction(BTN_ObjectList_t ID);
+void TestSetBTN_Selves_ReadButtonFunction(BTN_ObjectList_t ID, ErrorCode_t (*NewValue)(BTN_ObjectList_t ID));
+void TestSetBTN_Selves_NotificationFunction(BTN_ObjectList_t ID, void (*NewValue)(BTN_ObjectList_t, ButtonState_t));
+void TestSetBTN_Selves_State(BTN_ObjectList_t ID, ButtonState_t NewValue);
+void TestSetBTN_Selves_Timer_mS(BTN_ObjectList_t ID, uint32_t NewValue);
+void TestSetBTN_Selves_PressedThreshold_mS(BTN_ObjectList_t ID, uint16_t NewValue);
+void TestSetBTN_Selves_LongPressedThreshold_mS(BTN_ObjectList_t ID, uint16_t NewValue);
+void TestSetBTN_Selves_DefaultState(BTN_ObjectList_t ID, ButtonDefaultState_t NewValue);
 bool TestWrapperBTN_Update_State_Machine(BTN_Object_t *self, uint32_t time_mS);
 
 ButtonState_t TestGetBTN_Selves_State(BTN_ObjectList_t ID)
@@ -336,6 +343,48 @@ void (*NotificationFunction)(BTN_ObjectList_t, ButtonState_t);
 TestGetBTN_Selves_NotificationFunction(BTN_ObjectList_t ID)
 {
 	return selves[ID].NotificationFunction;
+}
+
+void TestSetBTN_Selves_ReadButtonFunction(BTN_ObjectList_t ID, ErrorCode_t (*NewValue)(BTN_ObjectList_t ID))
+{
+	selves[ID].ReadButtonFunction = NewValue;
+	return;
+}
+
+void TestSetBTN_Selves_NotificationFunction(BTN_ObjectList_t ID, void (*NewValue)(BTN_ObjectList_t, ButtonState_t))
+{
+	selves[ID].NotificationFunction = NewValue;
+	return;
+}
+
+void TestSetBTN_Selves_State(BTN_ObjectList_t ID, ButtonState_t NewValue)
+{
+	selves[ID].State = NewValue;
+	return;
+}
+
+void TestSetBTN_Selves_Timer_mS(BTN_ObjectList_t ID, uint32_t NewValue)
+{
+	selves[ID].Timer_mS = NewValue;
+	return;
+}
+
+void TestSetBTN_Selves_PressedThreshold_mS(BTN_ObjectList_t ID, uint16_t NewValue)
+{
+	selves[ID].PressedThreshold_mS = NewValue;
+	return;
+}
+
+void TestSetBTN_Selves_LongPressedThreshold_mS(BTN_ObjectList_t ID, uint16_t NewValue)
+{
+	selves[ID].LongPressedThreshold_mS = NewValue;
+	return;
+}
+
+void TestSetBTN_Selves_DefaultState(BTN_ObjectList_t ID, ButtonDefaultState_t NewValue)
+{
+	selves[ID].DefaultState = NewValue;
+	return;
 }
 
 bool TestWrapperBTN_Update_State_Machine(BTN_Object_t *self, uint32_t time_mS)
